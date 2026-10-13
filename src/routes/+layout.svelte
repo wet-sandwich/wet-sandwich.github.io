@@ -14,6 +14,4 @@
 
 <Navbar />
 
-<main class="p-4">
-	{@render children()}
-</main>
+{@render children()}
