@@ -25,7 +25,7 @@
   }
 </script>
 
-<article class="flex flex-col px-4 py-2 m-2 bg-white rounded-sm shadow-md gap-2">
+<article class="flex flex-col px-4 py-2 m-2 bg-white rounded-sm shadow-md gap-2 md:max-w-lg md:mx-auto">
   <header class="flex items-center justify-between">
     <h2 class="text-lg font-semibold text-slate-800">{task}</h2>
     <time datetime={formatISOduration(time)} class="font-semibold text-slate-800">
