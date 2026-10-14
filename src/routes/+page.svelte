@@ -3,6 +3,12 @@
   import Add from '../lib/icons/Add.svelte';
   import Gear from '../lib/icons/Gear.svelte';
   import HeaderButton from '../lib/HeaderButton.svelte';
+  import TimeCard from '../lib/TimeCard.svelte';
+
+  let entries = [
+    { task: "dev work", project: "B-123456", time: 1200 },
+    { task: "analysis", project: "B-654321", time: 5642 },
+  ]
 </script>
 
 <PageHeader title="Timer">
@@ -19,6 +25,6 @@
   />
 </PageHeader>
 
-<div class="mx-4">
-  <p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-</div>
+{#each entries as entry}
+  <TimeCard {...entry} />
+{/each}
