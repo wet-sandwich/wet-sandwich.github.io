@@ -2,7 +2,7 @@
   import Play from "./icons/Play.svelte";
   import Stop from "./icons/Stop.svelte";
 
-  let { id, task, project, start, end, duration } = $props();
+  let { id, task, project, start, _end, duration } = $props();
   let elapsed = $derived(Math.round(Date.now() / 1000) - start);
 
   $effect(() => {
