@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   let open = $state(false);
 
   const links = [
@@ -10,7 +10,7 @@
     open = false;
   }
 
-  function onkeydown(e) {
+  function onkeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') close();
   }
 </script>

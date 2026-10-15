@@ -1,4 +1,7 @@
 <script lang="ts">
+  import Play from "./icons/Play.svelte";
+  import Stop from "./icons/Stop.svelte";
+
   interface Props {
     id: string;
     task: string;
@@ -7,9 +10,6 @@
     end?: number;
     duration?: number;
   }
-
-  import Play from "./icons/Play.svelte";
-  import Stop from "./icons/Stop.svelte";
 
   let { id, task, project, start, duration }: Props = $props();
   let elapsed = $derived(Math.round(Date.now() / 1000) - start);

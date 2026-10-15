@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import PageHeader from "../lib/PageHeader.svelte";
   import Add from "../lib/icons/Add.svelte";
   import Gear from "../lib/icons/Gear.svelte";

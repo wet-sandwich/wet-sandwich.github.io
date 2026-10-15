@@ -1,5 +1,11 @@
 <script lang="ts">
-  let { children } = $props();
+  import type { Snippet } from "svelte";
+
+  interface Props {
+    children: Snippet;
+  }
+
+  let { children }: Props = $props();
 </script>
 
 <h1 class="uppercase font-semibold mx-4 mt-4">{@render children()}</h1>
