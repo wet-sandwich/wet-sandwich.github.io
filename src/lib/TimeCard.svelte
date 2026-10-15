@@ -74,7 +74,7 @@
         type="button"
         aria-label="start timer"
         onclick={startTimer}
-        class="rounded-full test-slate-600 cursor-pointer transition hover:bg-slate-200 hover:text-slate-900
+        class="rounded-full text-slate-600 cursor-pointer transition hover:bg-slate-200 hover:text-slate-900
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       >
         <Play />
