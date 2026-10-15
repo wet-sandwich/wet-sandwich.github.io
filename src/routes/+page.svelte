@@ -1,10 +1,10 @@
 <script lang="ts">
-  import PageHeader from "../lib/PageHeader.svelte";
-  import Add from "../lib/icons/Add.svelte";
-  import Gear from "../lib/icons/Gear.svelte";
-  import HeaderButton from "../lib/HeaderButton.svelte";
-  import TimeCard from "../lib/TimeCard.svelte";
-  import SectionHeader from "../lib/SectionHeader.svelte";
+  import PageHeader from "#lib/PageHeader.svelte";
+  import Add from "#lib/icons/Add.svelte";
+  import Gear from "#lib/icons/Gear.svelte";
+  import HeaderButton from "#lib/HeaderButton.svelte";
+  import TimeCard from "#lib/TimeCard.svelte";
+  import SectionHeader from "#lib/SectionHeader.svelte";
 
   let current = {
     id: "as56",
