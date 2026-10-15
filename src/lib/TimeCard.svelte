@@ -1,6 +1,7 @@
 <script lang="ts">
   import Play from "./icons/Play.svelte";
   import Stop from "./icons/Stop.svelte";
+  import { formatISOduration, formatReadable } from "#lib/utils"
 
   interface Props {
     id: string;
@@ -24,27 +25,6 @@
       clearInterval(id);
     };
   });
-
-  function formatISOduration(seconds: number) {
-    const totalMinutes = Math.round(seconds / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    const h = hours > 0 ? `${hours}H` : "";
-    const m = minutes > 0 || hours === 0 ? `${minutes}M` : "";
-
-    return `PT${h}${m}`;
-  }
-
-  function formatReadable(seconds: number) {
-    const totalMinutes = Math.round(seconds / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    const m = minutes < 10 ? `0${minutes}` : `${minutes}`;
-
-    return `${hours}:${m}`;
-  }
 
   function startTimer() {
     console.log(`placeholder for startTimer: copy entry ${id}`);
