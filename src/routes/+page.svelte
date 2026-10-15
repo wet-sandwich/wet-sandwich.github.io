@@ -4,6 +4,7 @@
   import Gear from "../lib/icons/Gear.svelte";
   import HeaderButton from "../lib/HeaderButton.svelte";
   import TimeCard from "../lib/TimeCard.svelte";
+  import SectionHeader from "../lib/SectionHeader.svelte";
 
   let current = {
     id: "as56",
@@ -11,6 +12,7 @@
     project: "B-123456",
     start: 1792003353,
   };
+  // let current;
   let entries = [
     {
       id: "qw12",
@@ -45,10 +47,12 @@
   />
 </PageHeader>
 
-<h2>Current</h2>
-<TimeCard {...current} />
+{#if current}
+  <SectionHeader>Current</SectionHeader>
+  <TimeCard {...current} />
+{/if}
 
-<h2>Activity</h2>
+<SectionHeader>Activity</SectionHeader>
 {#each entries as entry}
   <TimeCard {...entry} />
 {/each}
