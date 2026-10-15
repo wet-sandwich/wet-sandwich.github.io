@@ -8,4 +8,6 @@
   let { children }: Props = $props();
 </script>
 
-<h1 class="uppercase font-semibold mx-4 mt-4">{@render children()}</h1>
+<h1 class="uppercase font-semibold mx-4 mt-4 md:max-w-lg md:mx-auto">
+  {@render children()}
+</h1>
