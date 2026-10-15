@@ -8,7 +8,7 @@
 
   let current = {
     id: "as56",
-    task: "dev work",
+    task: "Dev work",
     project: "B-123456",
     start: 1792003353,
   };
@@ -16,7 +16,7 @@
   let entries = [
     {
       id: "qw12",
-      task: "dev work",
+      task: "Dev work",
       project: "B-123456",
       start: 1792003353,
       end: 1792004553,
@@ -24,7 +24,7 @@
     },
     {
       id: "er34",
-      task: "analysis",
+      task: "Analysis",
       project: "B-654321",
       start: 1792004553,
       end: 1792010195,
