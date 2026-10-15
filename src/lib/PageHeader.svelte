@@ -1,8 +1,4 @@
 <script>
-  import Add from '../lib/icons/Add.svelte';
-  import Gear from '../lib/icons/Gear.svelte';
-  import HeaderButton from '../lib/HeaderButton.svelte';
-
   let { title, children } = $props();
 </script>
 
