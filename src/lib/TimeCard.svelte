@@ -1,7 +1,10 @@
 <script lang="ts">
-  import Play from "./icons/Play.svelte";
-  import Stop from "./icons/Stop.svelte";
-  import { formatISOduration, formatReadable } from "#lib/utils"
+  import Play from "#lib/icons/Play.svelte";
+  import Stop from "#lib/icons/Stop.svelte";
+  import Modal from "#lib/Modal.svelte";
+  import { formatISOduration, formatReadable } from "#lib/utils";
+
+  let isModalOpen = $state(false);
 
   interface Props {
     id: string;
@@ -12,7 +15,7 @@
     duration?: number;
   }
 
-  let { id, task, project, start, duration }: Props = $props();
+  let { id, task, project, start, end, duration }: Props = $props();
   let elapsed = $derived(Math.round(Date.now() / 1000) - start);
 
   $effect(() => {
@@ -39,7 +42,14 @@
   class="flex flex-col px-4 py-3 m-2 bg-white rounded-sm shadow-md gap-2 md:max-w-lg md:mx-auto"
 >
   <header class="flex items-center justify-between">
-    <h2 class="text-base font-semibold text-slate-800">{task}</h2>
+    <h2 class="text-base font-semibold text-slate-800 w-full">
+      <button
+        onclick={() => (isModalOpen = true)}
+        class="text-left cursor-pointer w-full"
+      >
+        {task}
+      </button>
+    </h2>
     <time
       datetime={formatISOduration(duration ?? elapsed)}
       class="text-base font-semibold text-slate-800"
@@ -72,3 +82,13 @@
     {/if}
   </footer>
 </article>
+
+<Modal bind:show={isModalOpen} title="Time Entry">
+  <div>
+    <p>{task}</p>
+    <p>{project}</p>
+    <p>{start}</p>
+    <p>{end}</p>
+    <p>{duration}</p>
+  </div>
+</Modal>
