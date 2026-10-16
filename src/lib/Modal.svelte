@@ -1,7 +1,7 @@
 <script lang="ts">
   let { show = $bindable(false), title, children } = $props();
 
-  let dialogRef: HTMLDialogElement | null  = $state(null);
+  let dialogRef: HTMLDialogElement | null = $state(null);
 
   $effect(() => {
     if (show) {
@@ -17,11 +17,11 @@
   onclose={() => (show = false)}
   onclick={(e) => e.target === dialogRef && (show = false)}
   class="mx-0 mt-auto mb-0 h-[75dvh] max-h-none w-full max-w-none rounded-t-2xl
-    sm:m-auto sm:h-auto sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-2rem)] sm:max-w-md sm:rounded-xl"
+    sm:m-auto sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-2rem)] sm:max-w-md sm:rounded-xl"
 >
   <div class="p-4" role="document">
     <header class="flex items-center justify-between pb-2 mb-2">
-      <h2>{title}</h2>
+      <h2 class="text-lg font-semibold">{title}</h2>
       <button
         class="bg-none border-none text-lg cursor-pointer"
         onclick={() => (show = false)}
@@ -35,3 +35,63 @@
     </main>
   </div>
 </dialog>
+
+<style>
+  dialog {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    translate: 0 100%;
+    transition:
+      translate 300ms cubic-bezier(0.32, 0.72, 0, 1),
+      overlay 300ms allow-discrete,
+      display 300ms allow-discrete;
+  }
+
+  dialog[open] {
+    translate: 0 0;
+  }
+
+  @starting-style {
+    dialog[open] {
+      translate: 0 100%;
+    }
+  }
+
+  @media (min-width: 40rem) {
+    dialog {
+      translate: 0 100dvh;
+    }
+    dialog[open] {
+      translate: 0 0;
+    }
+    @starting-style {
+      dialog[open] {
+        translate: 0 100dvh;
+      }
+    }
+  }
+
+  dialog::backdrop {
+    opacity: 0;
+    transition:
+      opacity 300ms ease-out,
+      overlay 300ms allow-discrete,
+      display 300ms allow-discrete;
+  }
+  dialog[open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    dialog,
+    dialog::backdrop {
+      transition: none;
+    }
+  }
+</style>
