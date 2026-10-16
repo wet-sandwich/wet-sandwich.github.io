@@ -18,5 +18,25 @@ export function formatReadable(seconds: number): string {
 
   const m = minutes < 10 ? `0${minutes}` : `${minutes}`;
 
-  return `${hours}:${m}`;
+  return `${hours}h ${m}m`;
+}
+
+// get a timestamp in the form of "dd mmm yyyy HH:MM AM/PM" from a unix timestamp in seconds
+export function formatTimestamp(seconds: number) {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone,
+    })
+      .formatToParts(new Date(seconds * 1000))
+      .map((p) => [p.type, p.value])
+  );
+
+  return `${parts.day} ${parts.month} ${parts.year} ${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
 }

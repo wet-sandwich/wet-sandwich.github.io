@@ -2,6 +2,7 @@
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
   import Modal from "#lib/Modal.svelte";
+  import TimeEntryForm from "#lib/TimeEntryForm.svelte";
   import { formatISOduration, formatReadable } from "#lib/utils";
 
   let isModalOpen = $state(false);
@@ -52,7 +53,7 @@
     </h2>
     <time
       datetime={formatISOduration(duration ?? elapsed)}
-      class="text-base font-semibold text-slate-800"
+      class="text-base font-semibold text-slate-800 text-nowrap"
     >
       {formatReadable(duration ?? elapsed)}
     </time>
@@ -84,11 +85,12 @@
 </article>
 
 <Modal bind:show={isModalOpen} title="Time Entry">
-  <div>
-    <p>{task}</p>
-    <p>{project}</p>
-    <p>{start}</p>
-    <p>{end}</p>
-    <p>{duration}</p>
-  </div>
+  <TimeEntryForm
+    {id}
+    {task}
+    {project}
+    {start}
+    {end}
+    {duration}
+  />
 </Modal>
