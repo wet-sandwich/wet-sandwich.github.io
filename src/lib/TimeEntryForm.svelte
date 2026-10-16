@@ -1,4 +1,5 @@
 <script lang="ts">
+  import InfoLine from "./InfoLine.svelte";
   import { formatTimestamp, formatReadable } from "#lib/utils";
 
   interface Props {
@@ -14,28 +15,9 @@
 </script>
 
 <article class="flex flex-col gap-2 px-1">
-  <div class="flex justify-between">
-    <span class="font-semibold">Task</span>
-    {task}
-  </div>
-  <div class="flex justify-between">
-    <span class="font-semibold">Project</span>
-    {project}
-  </div>
-  <div class="flex justify-between">
-    <span class="font-semibold">Start</span>
-    {formatTimestamp(start)}
-  </div>
-  {#if end}
-    <div class="flex justify-between">
-      <span class="font-semibold">End</span>
-      {formatTimestamp(end)}
-    </div>
-  {/if}
-  {#if duration}
-    <div class="flex justify-between">
-      <span class="font-semibold">Duration</span>
-      {formatReadable(duration)}
-    </div>
-  {/if}
+  <InfoLine name="Task" value={task} />
+  <InfoLine name="Project" value={project} />
+  <InfoLine name="Start" value={formatTimestamp(start)} />
+  {#if end}<InfoLine name="End" value={formatTimestamp(end)} />{/if}
+  {#if duration}<InfoLine name="Duration" value={formatReadable(duration)} />{/if}
 </article>
