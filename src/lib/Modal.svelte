@@ -16,7 +16,7 @@
   bind:this={dialogRef}
   onclose={() => (show = false)}
   onclick={(e) => e.target === dialogRef && (show = false)}
-  class="mx-0 mt-auto mb-0 h-[75dvh] max-h-none w-full max-w-none rounded-t-2xl
+  class="mx-0 mt-auto mb-0 h-[75dvh] max-h-none w-full max-w-none rounded-t-2xl backdrop:bg-black/70
     sm:m-auto sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-2rem)] sm:max-w-md sm:rounded-xl"
 >
   <div class="p-4" role="document">
