@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DangerButton, InfoLine, PrimaryButton, SecondaryButton } from "#lib";
+  import { DangerButton, InfoLine, Input, PrimaryButton, SecondaryButton } from "#lib";
   import { formatTimestamp, formatReadable } from "#lib/utils";
 
   interface Props {
@@ -38,9 +38,9 @@
       <SecondaryButton onclick={() => (isEditing = true)} text="Edit" />
     </div>
   {:else}
-    <input type="text" placeholder={task} />
+    <Input label="Task" value={task} required />
 
-    <input type="text" placeholder={project} />
+    <Input label="Project" value={project} />
 
     <div class="flex justify-end mt-4 gap-4">
       <SecondaryButton onclick={() => (isEditing = false)} text="Cancel" />
