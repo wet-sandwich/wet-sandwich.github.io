@@ -2,7 +2,7 @@
   let open = $state(false);
 
   const links = [
-    { href: '/', label: 'Timer' },
+    { href: '/', label: 'Timers' },
     { href: '/reports', label: 'Reports' }
   ];
 

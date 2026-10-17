@@ -1,8 +1,7 @@
 <script lang="ts">
+  import { InfoModal, TimeEntryForm } from "#lib";
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
-  import Modal from "#lib/Modal.svelte";
-  import TimeEntryForm from "#lib/TimeEntryForm.svelte";
   import { formatISOduration, formatReadable } from "#lib/utils";
 
   let isModalOpen = $state(false);
@@ -84,7 +83,7 @@
   </footer>
 </article>
 
-<Modal bind:show={isModalOpen} title="Time Entry">
+<InfoModal bind:show={isModalOpen} title="Time Entry">
   <TimeEntryForm
     {id}
     {task}
@@ -93,4 +92,4 @@
     {end}
     {duration}
   />
-</Modal>
+</InfoModal>

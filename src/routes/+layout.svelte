@@ -3,7 +3,7 @@
 	import "../app.css";
 	import favicon from "#lib/assets/favicon.svg";
 	import type { LayoutProps } from "./$types";
-	import Navbar from "#lib/Navbar.svelte";
+	import { Navbar } from "#lib";
 
 	let { children }: LayoutProps = $props();
 </script>

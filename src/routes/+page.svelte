@@ -1,10 +1,7 @@
 <script lang="ts">
-  import PageHeader from "#lib/PageHeader.svelte";
+  import { IconButton, PageHeader, SectionHeader, TimerCard } from "#lib";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
-  import HeaderButton from "#lib/HeaderButton.svelte";
-  import TimeCard from "#lib/TimeCard.svelte";
-  import SectionHeader from "#lib/SectionHeader.svelte";
 
   let current = {
     id: "as56",
@@ -33,14 +30,14 @@
   ];
 </script>
 
-<PageHeader title="Timer">
-  <HeaderButton
+<PageHeader title="Timers">
+  <IconButton
     label="Add"
     icon={Add}
     onclick={() => console.log("add timer")}
   />
 
-  <HeaderButton
+  <IconButton
     label="Settings"
     icon={Gear}
     onclick={() => console.log("timer settings")}
@@ -49,10 +46,10 @@
 
 {#if current}
   <SectionHeader>Current</SectionHeader>
-  <TimeCard {...current} />
+  <TimerCard {...current} />
 {/if}
 
 <SectionHeader>Activity</SectionHeader>
 {#each entries as entry}
-  <TimeCard {...entry} />
+  <TimerCard {...entry} />
 {/each}

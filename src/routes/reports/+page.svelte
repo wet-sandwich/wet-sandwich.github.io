@@ -1,11 +1,10 @@
 <script lang="ts">
-  import PageHeader from '#lib/PageHeader.svelte';
+  import { IconButton, PageHeader } from "#lib";
   import Gear from '#lib/icons/Gear.svelte';
-  import HeaderButton from '#lib/HeaderButton.svelte';
 </script>
 
 <PageHeader title="Reports">
-  <HeaderButton
+  <IconButton
     label="Settings"
     icon={Gear}
     onclick={() => console.log("report settings")}

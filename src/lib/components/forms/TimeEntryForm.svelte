@@ -1,8 +1,5 @@
 <script lang="ts">
-  import InfoLine from "#lib/InfoLine.svelte";
-  import PrimaryButton from "#lib/PrimaryButton.svelte";
-  import SecondaryButton from "#lib/SecondaryButton.svelte";
-  import DangerButton from "#lib/DangerButton.svelte";
+  import { DangerButton, InfoLine, PrimaryButton, SecondaryButton } from "#lib";
   import { formatTimestamp, formatReadable } from "#lib/utils";
 
   interface Props {
@@ -48,7 +45,7 @@
     <div class="flex justify-end mt-4 gap-4">
       <SecondaryButton onclick={() => (isEditing = false)} text="Cancel" />
 
-      <PrimaryButton onclick={() => (isEditing = false)} text="Cancel" />
+      <PrimaryButton onclick={() => (isEditing = false)} text="Save" />
     </div>
   {/if}
 </article>
