@@ -49,7 +49,7 @@
   }
 
   dialog[open] {
-    translate: 0 0;
+    translate: none;
   }
 
   @starting-style {
@@ -63,7 +63,7 @@
       translate: 0 100dvh;
     }
     dialog[open] {
-      translate: 0 0;
+      translate: none;
     }
     @starting-style {
       dialog[open] {

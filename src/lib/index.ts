@@ -23,3 +23,4 @@ export { default as InfoModal } from "./components/modals/InfoModal.svelte";
 
 // input components
 export { default as Input } from "./components/inputs/Input.svelte";
+export { default as DatePicker } from "./components/inputs/DatePicker.svelte";

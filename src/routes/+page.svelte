@@ -7,7 +7,7 @@
     id: "as56",
     task: "Dev work",
     project: "B-123456",
-    start: 1792003353,
+    start: 1792003353000,
   };
   // let current;
   let entries = [
@@ -15,17 +15,17 @@
       id: "qw12",
       task: "Dev work",
       project: "B-123456",
-      start: 1792003353,
-      end: 1792004553,
-      duration: 1200,
+      start: 1792003353000,
+      end: 1792004553000,
+      duration: 1200000,
     },
     {
       id: "er34",
       task: "Analysis",
       project: "B-654321",
-      start: 1792004553,
-      end: 1792010195,
-      duration: 5642,
+      start: 1792004553000,
+      end: 1792010195000,
+      duration: 5642000,
     },
   ];
 </script>

@@ -16,7 +16,7 @@
   }
 
   let { id, task, project, start, end, duration }: Props = $props();
-  let elapsed = $derived(Math.round(Date.now() / 1000) - start);
+  let elapsed = $derived(Math.round(Date.now()) - start);
 
   $effect(() => {
     if (duration) return;

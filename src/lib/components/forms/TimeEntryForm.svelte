@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { DangerButton, InfoLine, Input, PrimaryButton, SecondaryButton } from "#lib";
+  import {
+    DangerButton,
+    DatePicker,
+    InfoLine,
+    Input,
+    PrimaryButton,
+    SecondaryButton,
+  } from "#lib";
   import { formatTimestamp, formatReadable } from "#lib/utils";
 
   interface Props {
@@ -11,9 +18,14 @@
     duration?: number;
   }
 
-  let { task, project, start, end, duration }: Props = $props();
+  let { task, project, start, end }: Props = $props();
 
   let isEditing = $state(false);
+
+  function handleSave() {
+    isEditing = false;
+    console.log(task, project, start, end);
+  }
 </script>
 
 <article class="flex flex-col gap-2 px-1">
@@ -26,10 +38,8 @@
 
     {#if end}
       <InfoLine name="End" value={formatTimestamp(end)} />
-    {/if}
 
-    {#if duration}
-      <InfoLine name="Duration" value={formatReadable(duration)} />
+      <InfoLine name="Duration" value={formatReadable(end - start)} />
     {/if}
 
     <div class="flex justify-between mt-4">
@@ -38,14 +48,18 @@
       <SecondaryButton onclick={() => (isEditing = true)} text="Edit" />
     </div>
   {:else}
-    <Input label="Task" value={task} required />
+    <Input label="Task" bind:value={task} required />
 
-    <Input label="Project" value={project} />
+    <Input label="Project" bind:value={project} />
+
+    <DatePicker label="Start" bind:timestamp={start} />
+
+    <DatePicker label="End" bind:timestamp={end} />
 
     <div class="flex justify-end mt-4 gap-4">
       <SecondaryButton onclick={() => (isEditing = false)} text="Cancel" />
 
-      <PrimaryButton onclick={() => (isEditing = false)} text="Save" />
+      <PrimaryButton onclick={handleSave} text="Save" />
     </div>
   {/if}
 </article>
