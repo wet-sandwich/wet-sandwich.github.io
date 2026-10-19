@@ -10,12 +10,23 @@
       dialogRef?.close();
     }
   });
+
+  function onDialogClick(e: MouseEvent) {
+    const r = dialogRef?.getBoundingClientRect();
+    if (!r) return;
+    const inside =
+      e.clientX >= r.left &&
+      e.clientX <= r.right &&
+      e.clientY >= r.top &&
+      e.clientY <= r.bottom;
+    if (!inside) dialogRef?.close();
+  }
 </script>
 
 <dialog
   bind:this={dialogRef}
   onclose={() => (show = false)}
-  onclick={(e) => e.target === dialogRef && (show = false)}
+  onclick={onDialogClick}
   class="mx-0 mt-auto mb-0 h-[75dvh] max-h-none w-full max-w-none rounded-t-2xl backdrop:bg-black/70
     sm:m-auto sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-2rem)] sm:max-w-md sm:rounded-xl"
 >
