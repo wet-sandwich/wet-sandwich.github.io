@@ -15,7 +15,6 @@
     project: string;
     start: number;
     end?: number;
-    duration?: number;
   }
 
   let { task, project, start, end }: Props = $props();
@@ -24,7 +23,7 @@
 
   function handleSave() {
     isEditing = false;
-    console.log(task, project, start, end);
+    console.log("saving:", task, project, start, end);
   }
 </script>
 
@@ -54,7 +53,9 @@
 
     <DatePicker label="Start" bind:timestamp={start} />
 
-    <DatePicker label="End" bind:timestamp={end} />
+    {#if end}
+      <DatePicker label="End" bind:timestamp={end} />
+    {/if}
 
     <div class="flex justify-end mt-4 gap-4">
       <SecondaryButton onclick={() => (isEditing = false)} text="Cancel" />

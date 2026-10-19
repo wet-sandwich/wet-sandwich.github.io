@@ -12,14 +12,14 @@
     project: string;
     start: number;
     end?: number;
-    duration?: number;
   }
 
-  let { id, task, project, start, end, duration }: Props = $props();
+  let { id, task, project, start, end }: Props = $props();
+  let duration = $derived(end ? end - start : 0)
   let elapsed = $derived(Math.round(Date.now()) - start);
 
   $effect(() => {
-    if (duration) return;
+    if (end) return;
     const id = setInterval(() => {
       elapsed += 1;
     }, 1000);
@@ -51,10 +51,10 @@
       </button>
     </h2>
     <time
-      datetime={formatISOduration(duration ?? elapsed)}
+      datetime={formatISOduration(duration || elapsed)}
       class="text-base font-semibold text-slate-800 text-nowrap"
     >
-      {formatReadable(duration ?? elapsed)}
+      {formatReadable(duration || elapsed)}
     </time>
   </header>
   <footer class="flex items-center justify-between">
@@ -90,6 +90,5 @@
     {project}
     {start}
     {end}
-    {duration}
   />
 </InfoModal>
