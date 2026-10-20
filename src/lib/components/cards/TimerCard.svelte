@@ -3,6 +3,7 @@
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
   import { formatISOduration, formatReadable } from "#lib/utils";
+  import { stopTimer } from "#lib/timers.ts";
 
   let isModalOpen = $state(false);
 
@@ -31,10 +32,6 @@
 
   function startTimer() {
     console.log(`placeholder for startTimer: copy entry ${id}`);
-  }
-
-  function stopTimer() {
-    console.log(`placeholder for stopTimer: stop entry ${id}`);
   }
 </script>
 
