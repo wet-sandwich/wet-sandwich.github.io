@@ -21,7 +21,7 @@
   $effect(() => {
     if (end) return;
     const id = setInterval(() => {
-      elapsed += 1;
+      elapsed += 1000;
     }, 1000);
 
     return () => {
