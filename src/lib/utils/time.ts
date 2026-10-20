@@ -30,3 +30,11 @@ export function formatTimestamp(ms: number) {
   if (isNaN(ms)) return "";
   return format(new Date(ms), "MMM dd, y kk:mm");
 }
+
+// get a timestamp (in milliseconds) for the start of day X days prior
+export function startOfPriorDay(days: number): number {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}

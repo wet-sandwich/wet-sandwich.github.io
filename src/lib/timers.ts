@@ -1,3 +1,5 @@
+import { createTimer } from "#lib/db.ts";
+
 export const currentTimerKey = "currentTimer";
 
 export interface RunningTimer {
@@ -27,15 +29,16 @@ export function startTimer(task: string, project: string, start: number): Runnin
   return timer;
 }
 
-export function stopTimer() {
+export async function stopTimer() {
   const stored = localStorage.getItem(currentTimerKey);
   if (!stored) return;
   try {
     const current = JSON.parse(stored);
+    await createTimer({ ...current, end: Date.now() });
     console.log(`stopping timer at ${Date.now()}:`, current);
     localStorage.removeItem(currentTimerKey);
     window.dispatchEvent(
-      new StorageEvent("storage", { key: currentTimerKey, oldValue: current, newValue: null, storageArea: localStorage })
+      new StorageEvent("storage", { key: currentTimerKey, oldValue: JSON.stringify(current), newValue: null, storageArea: localStorage })
     );
   } catch (e) {
     console.error("Error stopping timer:", e);

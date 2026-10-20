@@ -11,27 +11,48 @@
   } from "#lib";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
-  import { currentTimerKey, getCurrentTimer, startTimer, stopTimer } from "#lib/timers.ts";
+  import {
+    currentTimerKey,
+    getCurrentTimer,
+    startTimer,
+    stopTimer,
+  } from "#lib/timers.ts";
+  import { getTimersBetween, readTimer } from "#lib/db.ts";
+  import { startOfPriorDay } from "#lib/utils/time.ts";
   import type { RunningTimer } from "#lib/timers.ts";
+  import type { TimeEntry } from "#lib/db.ts";
 
   let isModalOpen = $state(false);
   let currentTimer: RunningTimer | null = $state(null);
+  let entries: TimeEntry[] = $state([]);
 
   $effect(() => {
     if (!currentTimer) currentTimer = getCurrentTimer();
 
-    function onStorage(event: StorageEvent) {
+    async function onStorage(event: StorageEvent) {
       if (event.key === null) {
         currentTimer = null;
         return;
       }
       if (event.key === currentTimerKey && event.newValue === null) {
         currentTimer = null;
+        if (!event.oldValue) return;
+        const oldValue = JSON.parse(event.oldValue);
+        const stoppedTimer = await readTimer(oldValue.id);
+        entries.unshift(stoppedTimer);
       }
     }
 
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
+  });
+
+  $effect(() => {
+    const weekPrior = startOfPriorDay(7);
+    async function fetchTimers() {
+      entries = await getTimersBetween(weekPrior);
+    }
+    fetchTimers();
   });
 
   const initialData = () => ({
@@ -53,23 +74,6 @@
     currentTimer = startTimer(formData.task, formData.project, formData.start);
     Object.assign(formData, initialData());
   }
-
-  let entries = [
-    {
-      id: "qw12",
-      task: "Dev work",
-      project: "B-123456",
-      start: 1792003353000,
-      end: 1792004553000,
-    },
-    {
-      id: "er34",
-      task: "Analysis",
-      project: "B-654321",
-      start: 1792004553000,
-      end: 1792010195000,
-    },
-  ];
 </script>
 
 <PageHeader title="Timers">
@@ -88,9 +92,13 @@
 {/if}
 
 <SectionHeader>Activity</SectionHeader>
-{#each entries as entry}
-  <TimerCard {...entry} />
-{/each}
+{#if entries.length}
+  {#each entries as entry}
+    <TimerCard {...entry} />
+  {/each}
+{:else}
+  <p class="px-4">No recent activity.</p>
+{/if}
 
 <InfoModal bind:show={isModalOpen} title="New Timer">
   <form onsubmit={handleSubmit}>
