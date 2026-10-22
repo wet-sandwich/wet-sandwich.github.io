@@ -20,6 +20,7 @@ export { default as TimeEntryForm } from "./components/forms/TimeEntryForm.svelt
 
 // modal components
 export { default as InfoModal } from "./components/modals/InfoModal.svelte";
+export { default as ConfirmModal } from "./components/modals/ConfirmModal.svelte";
 
 // input components
 export { default as Input } from "./components/inputs/Input.svelte";

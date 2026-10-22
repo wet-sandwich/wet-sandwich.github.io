@@ -9,6 +9,7 @@
   } from "#lib";
   import { formatTimestamp, formatReadable } from "#lib/utils";
   import db from "#lib/Database.ts";
+  import ConfirmModal from "../modals/ConfirmModal.svelte";
 
   interface Props {
     id: string;
@@ -22,10 +23,15 @@
   let { id, task, project, start, end, show = $bindable() }: Props = $props();
 
   let isEditing = $state(false);
+  let isConfirmOpen = $state(false);
 
   function handleSave() {
     isEditing = false;
     console.log("saving:", task, project, start, end);
+  }
+
+  function confirmDelete() {
+    isConfirmOpen = true;
   }
 
   async function handleDelete() {
@@ -49,7 +55,7 @@
     {/if}
 
     <div class="flex justify-between mt-4">
-      <DangerButton onclick={handleDelete} text="Delete" />
+      <DangerButton onclick={confirmDelete} text="Delete" />
 
       <SecondaryButton onclick={() => (isEditing = true)} text="Edit" />
     </div>
@@ -71,3 +77,10 @@
     </div>
   {/if}
 </article>
+
+<ConfirmModal
+  bind:show={isConfirmOpen}
+  text="Are you sure you want to delete this time entry?"
+  buttonText="Delete"
+  callback={handleDelete}
+/>
