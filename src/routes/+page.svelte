@@ -108,7 +108,7 @@
     <TimerCard {...entry} />
   {/each}
 {:else}
-  <p class="px-4">No recent activity.</p>
+  <p class="mx-4 mt-4 md:max-w-lg md:mx-auto">No recent activity.</p>
 {/if}
 
 <InfoModal bind:show={isModalOpen} title="New Timer">
