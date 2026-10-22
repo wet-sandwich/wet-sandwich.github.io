@@ -1,4 +1,4 @@
-import { createTimer } from "#lib/db.ts";
+import db from "#lib/Database.ts";
 
 export const currentTimerKey = "currentTimer";
 
@@ -34,7 +34,7 @@ export async function stopTimer() {
   if (!stored) return;
   try {
     const current = JSON.parse(stored);
-    await createTimer({ ...current, end: Date.now() });
+    await db.createTimer({ ...current, end: Date.now() });
     console.log(`stopping timer at ${Date.now()}:`, current);
     localStorage.removeItem(currentTimerKey);
     window.dispatchEvent(

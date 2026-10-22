@@ -87,5 +87,6 @@
     {project}
     {start}
     {end}
+    bind:show={isModalOpen}
   />
 </InfoModal>

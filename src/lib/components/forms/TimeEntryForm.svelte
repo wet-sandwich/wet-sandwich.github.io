@@ -8,6 +8,7 @@
     SecondaryButton,
   } from "#lib";
   import { formatTimestamp, formatReadable } from "#lib/utils";
+  import db from "#lib/Database.ts";
 
   interface Props {
     id: string;
@@ -15,15 +16,21 @@
     project: string;
     start: number;
     end?: number;
+    show: boolean;
   }
 
-  let { task, project, start, end }: Props = $props();
+  let { id, task, project, start, end, show = $bindable() }: Props = $props();
 
   let isEditing = $state(false);
 
   function handleSave() {
     isEditing = false;
     console.log("saving:", task, project, start, end);
+  }
+
+  async function handleDelete() {
+    await db.deleteTimer(id);
+    show = false;
   }
 </script>
 
@@ -42,7 +49,7 @@
     {/if}
 
     <div class="flex justify-between mt-4">
-      <DangerButton onclick={() => console.log("delete me!")} text="Delete" />
+      <DangerButton onclick={handleDelete} text="Delete" />
 
       <SecondaryButton onclick={() => (isEditing = true)} text="Edit" />
     </div>

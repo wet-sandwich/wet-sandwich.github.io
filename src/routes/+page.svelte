@@ -9,6 +9,7 @@
     SectionHeader,
     TimerCard,
   } from "#lib";
+  import { onMount } from "svelte";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
   import {
@@ -17,17 +18,34 @@
     startTimer,
     stopTimer,
   } from "#lib/timers.ts";
-  import { getTimersBetween, readTimer } from "#lib/db.ts";
   import { startOfPriorDay } from "#lib/utils/time.ts";
+  import db from "#lib/Database";
   import type { RunningTimer } from "#lib/timers.ts";
-  import type { TimeEntry } from "#lib/db.ts";
+  import type { TimeEntry } from "#lib/Database.ts";
 
   let isModalOpen = $state(false);
   let currentTimer: RunningTimer | null = $state(null);
   let entries: TimeEntry[] = $state([]);
 
-  $effect(() => {
-    if (!currentTimer) currentTimer = getCurrentTimer();
+  onMount(() => {
+    currentTimer = getCurrentTimer();
+
+    const weekPrior = startOfPriorDay(7);
+    async function fetchTimers() {
+      entries = await db.getTimersBetween(weekPrior);
+    }
+    fetchTimers();
+
+    const unsubOnAdd = db.on("add", (payload) => {
+      console.log("onAddEvent::payload:", payload);
+      entries.unshift(payload.item);
+    });
+
+    const unsubOnDel = db.on("delete", (payload) => {
+      const { key } = payload;
+      console.log("onDelEvent::payload:", payload);
+      entries = entries.filter(i => i.id !== key);
+    })
 
     async function onStorage(event: StorageEvent) {
       if (event.key === null) {
@@ -36,23 +54,16 @@
       }
       if (event.key === currentTimerKey && event.newValue === null) {
         currentTimer = null;
-        if (!event.oldValue) return;
-        const oldValue = JSON.parse(event.oldValue);
-        const stoppedTimer = await readTimer(oldValue.id);
-        entries.unshift(stoppedTimer);
       }
     }
 
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  });
 
-  $effect(() => {
-    const weekPrior = startOfPriorDay(7);
-    async function fetchTimers() {
-      entries = await getTimersBetween(weekPrior);
-    }
-    fetchTimers();
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      unsubOnAdd();
+      unsubOnDel();
+    };
   });
 
   const initialData = () => ({
