@@ -1,5 +1,9 @@
 import { format } from "date-fns";
 
+function zeroPadding(num: number): string {
+  return num < 10 ? `0${num}` : `${num}`;
+}
+
 // create ISO duration string for use within <time> elements
 export function formatISOduration(ms: number): string {
   const seconds = Math.round(ms / 1000);
@@ -13,16 +17,31 @@ export function formatISOduration(ms: number): string {
   return `PT${h}${m}`;
 }
 
-// make a human readable string in the format of HH:MM
-export function formatReadable(ms: number): string {
+// make a human readable string in the format of Hh MMm
+export function formatHoursMinutes(ms: number): string {
   const seconds = Math.round(ms / 1000);
   const totalMinutes = Math.round(seconds / 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  const m = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  const m = zeroPadding(minutes);
 
   return `${hours}h ${m}m`;
+}
+
+// make a human readable string in the format of HH:MM:SS
+export function formatHoursMinutesSeconds(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const seconds = totalSeconds % 60;
+
+  const h = zeroPadding(hours);
+  const m = zeroPadding(minutes);
+  const s = zeroPadding(seconds);
+
+  return `${h}:${m}:${s}`;
 }
 
 // get a timestamp in the form of "Jan 01, 1970 24:00" from a timestamp in milliseconds

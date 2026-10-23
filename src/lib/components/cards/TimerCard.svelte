@@ -2,7 +2,7 @@
   import { InfoModal, TimeEntryForm } from "#lib";
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
-  import { formatISOduration, formatReadable } from "#lib/utils";
+  import { formatISOduration, formatHoursMinutes, formatHoursMinutesSeconds } from "#lib/utils";
   import { stopTimer } from "#lib/timers.ts";
 
   let isModalOpen = $state(false);
@@ -51,7 +51,7 @@
       datetime={formatISOduration(duration || elapsed)}
       class="text-base font-semibold text-slate-800 text-nowrap"
     >
-      {formatReadable(duration || elapsed)}
+      {duration ? formatHoursMinutes(duration) : formatHoursMinutesSeconds(elapsed)}
     </time>
   </header>
   <footer class="flex items-center justify-between">

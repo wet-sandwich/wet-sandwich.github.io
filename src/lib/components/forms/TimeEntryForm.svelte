@@ -7,7 +7,7 @@
     PrimaryButton,
     SecondaryButton,
   } from "#lib";
-  import { formatTimestamp, formatReadable } from "#lib/utils";
+  import { formatTimestamp, formatHoursMinutes } from "#lib/utils";
   import db from "#lib/Database.ts";
   import ConfirmModal from "../modals/ConfirmModal.svelte";
 
@@ -51,7 +51,7 @@
     {#if end}
       <InfoLine name="End" value={formatTimestamp(end)} />
 
-      <InfoLine name="Duration" value={formatReadable(end - start)} />
+      <InfoLine name="Duration" value={formatHoursMinutes(end - start)} />
     {/if}
 
     <div class="flex justify-between mt-4">
