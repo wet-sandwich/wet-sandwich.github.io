@@ -58,3 +58,12 @@ export async function stopTimer() {
     console.error("Error stopping timer:", e);
   }
 }
+
+export function deleteTimer() {
+  const stored = localStorage.getItem(currentTimerKey);
+  if (!stored) return;
+  localStorage.removeItem(currentTimerKey);
+  window.dispatchEvent(
+    new StorageEvent("storage", { key: currentTimerKey, oldValue: stored, newValue: null, storageArea: localStorage })
+  );
+}

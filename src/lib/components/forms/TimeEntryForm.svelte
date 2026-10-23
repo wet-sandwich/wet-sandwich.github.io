@@ -8,7 +8,7 @@
     SecondaryButton,
   } from "#lib";
   import { formatTimestamp, formatHoursMinutes } from "#lib/utils";
-  import { editTimer } from "#lib/timers.ts";
+  import { deleteTimer, editTimer } from "#lib/timers.ts";
   import db from "#lib/Database.ts";
   import ConfirmModal from "../modals/ConfirmModal.svelte";
 
@@ -41,7 +41,11 @@
   }
 
   async function handleDelete() {
-    await db.deleteTimer(id);
+    if (end) {
+      await db.deleteTimer(id);
+    } else {
+      deleteTimer();
+    }
     show = false;
   }
 </script>
@@ -86,7 +90,7 @@
 
 <ConfirmModal
   bind:show={isConfirmOpen}
-  text="Are you sure you want to delete this time entry?"
+  text={`Are you sure you want to delete this ${end ? "time entry" : "timer"}?`}
   buttonText="Delete"
   callback={handleDelete}
 />
