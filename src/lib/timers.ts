@@ -2,14 +2,14 @@ import db from "#lib/Database.ts";
 
 export const currentTimerKey = "currentTimer";
 
-export interface RunningTimer {
+export interface ActiveTimer {
   id: string;
   task: string;
   project: string;
   start: number;
 }
 
-export function getCurrentTimer(): RunningTimer | null {
+export function getCurrentTimer(): ActiveTimer | null {
   const stored = localStorage.getItem(currentTimerKey);
   if (!stored) return null;
   try {
@@ -22,11 +22,25 @@ export function getCurrentTimer(): RunningTimer | null {
   }
 }
 
-export function startTimer(task: string, project: string, start: number): RunningTimer {
+export function startTimer(task: string, project: string, start: number): ActiveTimer {
   const id = crypto.randomUUID();
   const timer = { id, task, project, start };
   localStorage.setItem(currentTimerKey, JSON.stringify(timer));
   return timer;
+}
+
+export function editTimer(timer: ActiveTimer): void {
+  const stored = localStorage.getItem(currentTimerKey);
+  if (!stored) return;
+  try {
+    const current = JSON.parse(stored);
+    localStorage.setItem(currentTimerKey, JSON.stringify(timer));
+    window.dispatchEvent(
+      new StorageEvent("storage", { key: currentTimerKey, oldValue: JSON.stringify(current), newValue: JSON.stringify(timer), storageArea: localStorage })
+    );
+  } catch (e) {
+    console.error("Error updating active timer:", e);
+  }
 }
 
 export async function stopTimer() {

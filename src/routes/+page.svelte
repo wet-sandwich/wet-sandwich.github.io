@@ -21,11 +21,11 @@
   } from "#lib/timers.ts";
   import { startOfPriorDay } from "#lib/utils/time.ts";
   import db from "#lib/Database";
-  import type { RunningTimer } from "#lib/timers.ts";
+  import type { ActiveTimer } from "#lib/timers.ts";
   import type { TimeEntry } from "#lib/Database.ts";
 
   let isModalOpen = $state(false);
-  let currentTimer: RunningTimer | null = $state(null);
+  let currentTimer: ActiveTimer | null = $state(null);
   let entries: TimeEntry[] = $state([]);
 
   onMount(() => {
@@ -38,14 +38,20 @@
     fetchTimers();
 
     const unsubOnAdd = db.on("add", (payload) => {
-      console.log("onAddEvent::payload:", payload);
       entries.unshift(payload.item);
     });
 
     const unsubOnDel = db.on("delete", (payload) => {
       const { key } = payload;
-      console.log("onDelEvent::payload:", payload);
       entries = entries.filter((i) => i.id !== key);
+    });
+
+    const unsubOnUpdate = db.on("update", (payload) => {
+      const { item } = payload;
+      const index = entries.findIndex((e) => e.id === item.id);
+      if (index >= 0) {
+        entries[index] = item;
+      }
     });
 
     async function onStorage(event: StorageEvent) {
@@ -55,6 +61,12 @@
       }
       if (event.key === currentTimerKey && event.newValue === null) {
         currentTimer = null;
+      } else if (event.key === currentTimerKey && event.newValue) {
+        try {
+          currentTimer = JSON.parse(event.newValue);
+        } catch (e) {
+          console.error("Failed to update active timer:", e);
+        }
       }
     }
 
@@ -64,6 +76,7 @@
       window.removeEventListener("storage", onStorage);
       unsubOnAdd();
       unsubOnDel();
+      unsubOnUpdate();
     };
   });
 

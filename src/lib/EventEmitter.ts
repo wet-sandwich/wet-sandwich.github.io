@@ -16,7 +16,6 @@ export class EventEmitter<T extends EventMap> {
   }
 
   public emit<K extends keyof T>(event: K, data: T[K]): void {
-    console.log("emitting event:", event);
     this.listeners.get(event)?.forEach((callback) => {
       callback(data);
     });

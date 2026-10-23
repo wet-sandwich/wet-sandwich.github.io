@@ -10,7 +10,8 @@ export interface TimeEntry {
 
 type DBEvents = {
   add: { item: TimeEntry };
-  delete: { key: IDBValidKey }
+  delete: { key: IDBValidKey };
+  update: { item: TimeEntry };
 }
 
 class Database extends EventEmitter<DBEvents> {
@@ -65,6 +66,19 @@ class Database extends EventEmitter<DBEvents> {
       const request = store.get(id);
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
+    });
+  }
+
+  async updateTimer(entry: TimeEntry): Promise<void> {
+    const db = await this.openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("timers", "readwrite");
+      tx.objectStore("timers").put(entry);
+      tx.oncomplete = () => {
+        resolve();
+        this.emit("update", { item: entry });
+      }
+      tx.onerror = () => reject();
     });
   }
 
