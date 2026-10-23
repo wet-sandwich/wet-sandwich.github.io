@@ -14,7 +14,7 @@ type DBEvents = {
   update: { item: TimeEntry };
 }
 
-class Database extends EventEmitter<DBEvents> {
+export class Database extends EventEmitter<DBEvents> {
   #db: IDBDatabase | null = null;
 
   private openDB(): Promise<IDBDatabase> {

@@ -8,7 +8,7 @@
     SecondaryButton,
   } from "#lib";
   import { formatTimestamp, formatHoursMinutes } from "#lib/utils";
-  import { deleteTimer, editTimer } from "#lib/timers.ts";
+  import timer from "#lib/ActiveTimer.svelte.ts";
   import db from "#lib/Database.ts";
   import ConfirmModal from "../modals/ConfirmModal.svelte";
 
@@ -29,7 +29,7 @@
   function handleSave() {
     isEditing = false;
     if (!end) {
-      editTimer({ id, task, project, start });
+      timer.edit({ id, task, project, start });
     } else {
       db.updateTimer({ id, task, project, start, end });
     }
@@ -44,7 +44,7 @@
     if (end) {
       await db.deleteTimer(id);
     } else {
-      deleteTimer();
+      timer.delete();
     }
     show = false;
   }

@@ -13,24 +13,15 @@
   import { onMount } from "svelte";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
-  import {
-    currentTimerKey,
-    getCurrentTimer,
-    startTimer,
-    stopTimer,
-  } from "#lib/timers.ts";
   import { startOfPriorDay } from "#lib/utils/time.ts";
+  import timer from "#lib/ActiveTimer.svelte.ts";
   import db from "#lib/Database";
-  import type { ActiveTimer } from "#lib/timers.ts";
   import type { TimeEntry } from "#lib/Database.ts";
 
   let isModalOpen = $state(false);
-  let currentTimer: ActiveTimer | null = $state(null);
   let entries: TimeEntry[] = $state([]);
 
   onMount(() => {
-    currentTimer = getCurrentTimer();
-
     const weekPrior = startOfPriorDay(7);
     async function fetchTimers() {
       entries = await db.getTimersBetween(weekPrior);
@@ -54,26 +45,7 @@
       }
     });
 
-    async function onStorage(event: StorageEvent) {
-      if (event.key === null) {
-        currentTimer = null;
-        return;
-      }
-      if (event.key === currentTimerKey && event.newValue === null) {
-        currentTimer = null;
-      } else if (event.key === currentTimerKey && event.newValue) {
-        try {
-          currentTimer = JSON.parse(event.newValue);
-        } catch (e) {
-          console.error("Failed to update active timer:", e);
-        }
-      }
-    }
-
-    window.addEventListener("storage", onStorage);
-
     return () => {
-      window.removeEventListener("storage", onStorage);
       unsubOnAdd();
       unsubOnDel();
       unsubOnUpdate();
@@ -83,20 +55,17 @@
   const initialData = () => ({
     task: "",
     project: "",
-    start: 0,
   });
   let formData = $state(initialData());
 
   function handleAddTimer() {
-    formData.start = Date.now();
     isModalOpen = true;
   }
 
-  function handleSubmit(event: SubmitEvent) {
-    stopTimer();
+  async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
     isModalOpen = false;
-    currentTimer = startTimer(formData.task, formData.project, formData.start);
+    await timer.start(formData.task, formData.project);
     Object.assign(formData, initialData());
   }
 </script>
@@ -112,8 +81,8 @@
 </PageHeader>
 
 <SectionHeader>Current</SectionHeader>
-{#if currentTimer}
-  <TimerCard {...currentTimer} />
+{#if timer.current}
+  <TimerCard {...timer.current} />
 {:else}
   <SectionText>No active timer.</SectionText>
 {/if}

@@ -3,7 +3,7 @@
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
   import { formatISOduration, formatHoursMinutes, formatHoursMinutesSeconds } from "#lib/utils";
-  import { stopTimer } from "#lib/timers.ts";
+  import timer from "#lib/ActiveTimer.svelte.ts";
 
   let isModalOpen = $state(false);
 
@@ -30,8 +30,8 @@
     };
   });
 
-  function startTimer() {
-    console.log(`placeholder for startTimer: copy entry ${id}`);
+  async function restartTimer() {
+    await timer.start(task, project);
   }
 </script>
 
@@ -60,7 +60,7 @@
       <button
         type="button"
         aria-label="start timer"
-        onclick={startTimer}
+        onclick={restartTimer}
         class="rounded-full text-slate-600 cursor-pointer transition hover:bg-slate-200 hover:text-slate-900
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       >
@@ -70,7 +70,7 @@
       <button
         type="button"
         aria-label="stop timer"
-        onclick={stopTimer}
+        onclick={() => timer.stop()}
         class="rounded-full text-red-600 cursor-pointer transition hover:bg-red-200 hover:text-red-900
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
       >
