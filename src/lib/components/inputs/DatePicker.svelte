@@ -49,12 +49,12 @@
         <Calendar />
       </span>
       <input
-        type="text"
+        type="button"
         value={displayValue}
         onclick={togglePicker}
         {required}
         {disabled}
-        class="w-full pl-10 pr-3 py-2 text-sm bg-white border rounded-lg shadow-sm outline-none"
+        class="w-full pl-10 pr-3 py-2 text-sm text-left bg-white border rounded-lg shadow-sm outline-none"
       />
     </div>
   </label>
