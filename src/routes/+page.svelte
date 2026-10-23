@@ -7,6 +7,7 @@
     PrimaryButton,
     SecondaryButton,
     SectionHeader,
+    SectionText,
     TimerCard,
   } from "#lib";
   import { onMount } from "svelte";
@@ -44,8 +45,8 @@
     const unsubOnDel = db.on("delete", (payload) => {
       const { key } = payload;
       console.log("onDelEvent::payload:", payload);
-      entries = entries.filter(i => i.id !== key);
-    })
+      entries = entries.filter((i) => i.id !== key);
+    });
 
     async function onStorage(event: StorageEvent) {
       if (event.key === null) {
@@ -97,9 +98,11 @@
   />
 </PageHeader>
 
+<SectionHeader>Current</SectionHeader>
 {#if currentTimer}
-  <SectionHeader>Current</SectionHeader>
   <TimerCard {...currentTimer} />
+{:else}
+  <SectionText>No active timer.</SectionText>
 {/if}
 
 <SectionHeader>Activity</SectionHeader>
@@ -108,7 +111,7 @@
     <TimerCard {...entry} />
   {/each}
 {:else}
-  <p class="mx-4 mt-4 md:max-w-lg md:mx-auto">No recent activity.</p>
+  <SectionText>No recent activity.</SectionText>
 {/if}
 
 <InfoModal bind:show={isModalOpen} title="New Timer">

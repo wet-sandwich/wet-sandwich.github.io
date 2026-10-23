@@ -4,6 +4,7 @@
 export { default as Navbar } from "./components/Navbar.svelte";
 export { default as PageHeader } from "./components/PageHeader.svelte";
 export { default as SectionHeader } from "./components/SectionHeader.svelte";
+export { default as SectionText } from "./components/SectionText.svelte";
 
 // button components
 export { default as DangerButton } from "./components/buttons/DangerButton.svelte";
