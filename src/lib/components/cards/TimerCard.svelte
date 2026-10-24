@@ -2,10 +2,15 @@
   import { InfoModal, TimeEntryForm } from "#lib";
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
-  import { formatISOduration, formatHoursMinutes, formatHoursMinutesSeconds } from "#lib/utils";
+  import {
+    formatISOduration,
+    formatHoursMinutes,
+    formatHoursMinutesSeconds,
+  } from "#lib/utils";
   import timer from "#lib/ActiveTimer.svelte.ts";
 
   let isModalOpen = $state(false);
+  let resumedAt = $state(Date.now());
 
   interface Props {
     id: string;
@@ -16,8 +21,15 @@
   }
 
   let { id, task, project, start, end }: Props = $props();
-  let duration = $derived(end ? end - start : 0)
-  let elapsed = $derived(Math.round(Date.now()) - start);
+  let duration = $derived(end ? end - start : 0);
+  let elapsed = $derived.by(() => {
+    resumedAt;
+    return Date.now() - start;
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") resumedAt = Date.now();
+  });
 
   $effect(() => {
     if (end) return;
@@ -51,7 +63,9 @@
       datetime={formatISOduration(duration || elapsed)}
       class="text-base font-semibold text-slate-800 text-nowrap"
     >
-      {duration ? formatHoursMinutes(duration) : formatHoursMinutesSeconds(elapsed)}
+      {duration
+        ? formatHoursMinutes(duration)
+        : formatHoursMinutesSeconds(elapsed)}
     </time>
   </header>
   <footer class="flex items-center justify-between">
@@ -81,12 +95,5 @@
 </article>
 
 <InfoModal bind:show={isModalOpen} title="Time Entry">
-  <TimeEntryForm
-    {id}
-    {task}
-    {project}
-    {start}
-    {end}
-    bind:show={isModalOpen}
-  />
+  <TimeEntryForm {id} {task} {project} {start} {end} bind:show={isModalOpen} />
 </InfoModal>
