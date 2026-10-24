@@ -33,7 +33,6 @@
     } else {
       db.updateTimer({ id, task, project, start, end });
     }
-    console.log();
   }
 
   function confirmDelete() {
