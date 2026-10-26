@@ -11,6 +11,7 @@ export { default as DangerButton } from "./components/buttons/DangerButton.svelt
 export { default as IconButton } from "./components/buttons/IconButton.svelte";
 export { default as PrimaryButton } from "./components/buttons/PrimaryButton.svelte";
 export { default as SecondaryButton } from "./components/buttons/SecondaryButton.svelte";
+export { default as PillButton } from "./components/buttons/PillButton.svelte";
 
 // card components
 export { default as TimerCard } from "./components/cards/TimerCard.svelte";
