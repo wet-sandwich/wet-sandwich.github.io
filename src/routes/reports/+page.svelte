@@ -1,5 +1,6 @@
 <script lang="ts">
   import IntervalSelect from "./IntervalSelect.svelte";
+  import Breakdown from "./Breakdown.svelte";
   import { IconButton, PageHeader, SectionHeader } from "#lib";
   import Gear from "#lib/icons/Gear.svelte";
   import db from "#lib/Database.ts";
@@ -34,4 +35,6 @@
 <IntervalSelect bind:start bind:end />
 
 <SectionHeader>Tracked Hours</SectionHeader>
-<p class="text-center text-5xl font-bold mt-4">{formatHoursMinutes(total)}</p>
+<p class="text-center text-5xl font-bold mt-4 mb-6">{formatHoursMinutes(total)}</p>
+
+<Breakdown {entries} />
