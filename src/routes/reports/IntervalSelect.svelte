@@ -75,7 +75,7 @@
 </script>
 
 <div
-  class="flex flex-row gap-2 m-4 pb-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+  class="flex flex-row gap-2 m-4 pb-2 md:max-w-lg md:mx-auto overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
 >
   {#each Object.values(intervals) as interval (interval.key)}
     <PillButton

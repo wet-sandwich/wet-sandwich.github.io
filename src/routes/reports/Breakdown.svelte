@@ -14,10 +14,12 @@
 </script>
 
 {#if entries.length}
-  <SubHeader>Project Totals</SubHeader>
-  <article class="flex flex-col gap-2 mx-4">
-    {#each Object.entries(projectTotals) as [name, total]}
-      <InfoLine {name} value={formatHoursMinutes(total)} />
-    {/each}
-  </article>
+  <div class="md:max-w-lg md:mx-auto">
+    <SubHeader>Project Totals</SubHeader>
+    <article class="flex flex-col gap-2 mx-4 md:mx-auto">
+      {#each Object.entries(projectTotals) as [name, total]}
+        <InfoLine {name} value={formatHoursMinutes(total)} />
+      {/each}
+    </article>
+  </div>
 {/if}
