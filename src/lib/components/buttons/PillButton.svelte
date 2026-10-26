@@ -13,7 +13,7 @@
   let stateClass = $derived(
     selected
       ? "text-white bg-blue-500 hover:bg-blue-700"
-      : "text-blue bg-gray-200 hover:bg-blue-500 border border-gray-400",
+      : "text-blue bg-gray-200 hover:text-white hover:bg-blue-700 border border-gray-400",
   );
 </script>
 
