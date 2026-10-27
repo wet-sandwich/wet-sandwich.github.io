@@ -14,7 +14,7 @@
   import { onMount } from "svelte";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
-  import { startOfPriorDay } from "#lib/utils/time.ts";
+  import { startOfPriorDay, organizeEntries } from "#lib/utils";
   import timer from "#lib/ActiveTimer.svelte.ts";
   import db from "#lib/Database";
   import type { TimeEntry } from "#lib/Database.ts";
@@ -90,7 +90,7 @@
 
 <SectionHeader>Activity</SectionHeader>
 {#if entries.length}
-  <ActivityViewer {entries} />
+  <ActivityViewer entries={organizeEntries(entries)} />
 {:else}
   <SectionText>No recent activity.</SectionText>
 {/if}

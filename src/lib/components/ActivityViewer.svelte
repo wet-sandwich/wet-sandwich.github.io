@@ -1,10 +1,10 @@
 <script lang="ts">
   import VirtualList from "@humanspeak/svelte-virtual-list";
-  import { TimerCard } from "#lib";
-  import type { TimeEntry } from "#lib/Database.js";
+  import { TimerCard, SubHeader } from "#lib";
+  import type { ActivityRow } from "../utils";
 
   interface Props {
-    entries: TimeEntry[];
+    entries: ActivityRow[];
   }
 
   let { entries }: Props = $props();
@@ -13,7 +13,11 @@
 <div class="h-dvh no-scrollbar-list">
   <VirtualList items={entries}>
     {#snippet renderItem(item)}
-      <TimerCard {...item} />
+      {#if item.type === "header"}
+        <SubHeader>{item.label}</SubHeader>
+      {:else}
+        <TimerCard {...item.entry} />
+      {/if}
     {/snippet}
   </VirtualList>
 </div>
