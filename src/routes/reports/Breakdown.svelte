@@ -17,7 +17,7 @@
   <div class="md:max-w-lg md:mx-auto">
     <SubHeader>Project Totals</SubHeader>
     <article class="flex flex-col gap-2 mx-4 md:mx-auto">
-      {#each Object.entries(projectTotals) as [name, total]}
+      {#each Object.entries(projectTotals) as [name, total] (name)}
         <InfoLine {name} value={formatHoursMinutes(total)} />
       {/each}
     </article>

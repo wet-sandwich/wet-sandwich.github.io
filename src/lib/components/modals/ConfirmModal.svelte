@@ -5,7 +5,7 @@
     show: boolean;
     text: string;
     buttonText: string;
-    callback: Function;
+    callback: () => void;
   }
 
   let { show = $bindable(false), text, buttonText, callback }: Props = $props();

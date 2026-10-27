@@ -23,7 +23,7 @@
   let { id, task, project, start, end }: Props = $props();
   let duration = $derived(end ? end - start : 0);
   let elapsed = $derived.by(() => {
-    resumedAt;
+    void resumedAt;
     return Date.now() - start;
   });
 

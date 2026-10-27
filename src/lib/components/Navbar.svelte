@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   let open = $state(false);
 
   const links = [
-    { href: '/', label: 'Timers' },
-    { href: '/reports', label: 'Reports' }
+    { href: "/" as const, label: "Timers" },
+    { href: "/reports" as const, label: "Reports" },
   ];
 
   function close() {
@@ -11,7 +12,7 @@
   }
 
   function onkeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') close();
+    if (e.key === "Escape") close();
   }
 </script>
 
@@ -20,11 +21,11 @@
 <header
   class="sticky top-0 z-50 flex h-[60px] items-center justify-between bg-slate-900 px-5 text-white"
 >
-  <a href="/" class="text-xl font-bold" onclick={close}>Time-It</a>
+  <a href={resolve("/")} class="text-xl font-bold" onclick={close}>Time-It</a>
 
   <button
     class="flex h-10 w-10 flex-col justify-center gap-[5px] p-2 md:hidden"
-    aria-label={open ? 'Close menu' : 'Open menu'}
+    aria-label={open ? "Close menu" : "Open menu"}
     aria-expanded={open}
     aria-controls="main-nav"
     onclick={() => (open = !open)}
@@ -51,10 +52,10 @@
       {open ? 'max-h-96' : 'max-h-0'}"
   >
     <ul class="flex flex-col px-5 pb-4 pt-2 md:flex-row md:gap-6 md:p-0">
-      {#each links as link}
+      {#each links as link (link.label)}
         <li>
           <a
-            href={link.href}
+            href={resolve(link.href)}
             onclick={close}
             class="block py-3 hover:underline md:py-0"
           >

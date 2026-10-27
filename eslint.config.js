@@ -28,6 +28,10 @@ export default defineConfig(
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser
 			}
+		},
+		rules: {
+			// False positive on $bindable props: writing to them updates the parent, which the core rule can't see.
+			"no-useless-assignment": "off"
 		}
 	},
 	{
