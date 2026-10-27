@@ -9,6 +9,7 @@
     SectionHeader,
     SectionText,
     TimerCard,
+    ActivityViewer,
   } from "#lib";
   import { onMount } from "svelte";
   import Add from "#lib/icons/Add.svelte";
@@ -89,9 +90,7 @@
 
 <SectionHeader>Activity</SectionHeader>
 {#if entries.length}
-  {#each entries as entry}
-    <TimerCard {...entry} />
-  {/each}
+  <ActivityViewer {entries} />
 {:else}
   <SectionText>No recent activity.</SectionText>
 {/if}
