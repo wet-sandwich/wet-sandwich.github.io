@@ -12,6 +12,10 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Navbar />
+<div class="flex h-dvh flex-col">
+	<Navbar />
 
-{@render children()}
+	<main class="flex min-h-0 flex-1 flex-col">
+		{@render children()}
+	</main>
+</div>

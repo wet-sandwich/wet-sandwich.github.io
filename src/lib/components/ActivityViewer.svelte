@@ -10,7 +10,7 @@
   let { entries }: Props = $props();
 </script>
 
-<div class="h-dvh no-scrollbar-list">
+<div class="min-h-0 flex-1 no-scrollbar-list">
   <VirtualList items={entries}>
     {#snippet renderItem(item)}
       {#if item.type === "header"}

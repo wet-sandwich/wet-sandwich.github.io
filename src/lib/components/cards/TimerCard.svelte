@@ -48,7 +48,7 @@
 </script>
 
 <article
-  class="flex flex-col px-4 py-3 m-2 bg-white rounded-sm shadow-md gap-2 md:max-w-lg md:mx-auto"
+  class="flex flex-col px-4 py-3 m-2 bg-white rounded-sm shadow-md gap-2 md:w-full md:max-w-lg md:mx-auto"
 >
   <header class="flex items-center justify-between">
     <h2 class="text-base font-semibold text-slate-800 w-full">
