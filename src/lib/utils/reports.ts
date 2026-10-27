@@ -1,5 +1,5 @@
 import type { TimeEntry } from "#lib/Database.ts";
-import { isSameDay, isToday, isYesterday, format } from "date-fns";
+import { isSameYear, isSameDay, isToday, isYesterday, format } from "date-fns";
 
 type Breakdown = Record<string, number>;
 
@@ -23,7 +23,8 @@ export function projectBreakdown(entries: TimeEntry[]): Breakdown {
 function friendlyLabel(date: Date): string {
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
-  return format(date, "MMM d, y");
+  if (isSameYear(Date.now(), date)) return format(date, "E MMM d");
+  return format(date, "E MMM d, y");
 }
 
 export function organizeEntries(entries: TimeEntry[]): ActivityRow[] {
