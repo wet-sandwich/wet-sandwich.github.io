@@ -29,16 +29,16 @@
     }
     fetchTimers();
 
-    const unsubOnAdd = db.on("add", (payload) => {
+    const unsubOnAdd = db.on("addTimer", (payload) => {
       entries.unshift(payload.item);
     });
 
-    const unsubOnDel = db.on("delete", (payload) => {
+    const unsubOnDel = db.on("deleteTimer", (payload) => {
       const { key } = payload;
       entries = entries.filter((i) => i.id !== key);
     });
 
-    const unsubOnUpdate = db.on("update", (payload) => {
+    const unsubOnUpdate = db.on("updateTimer", (payload) => {
       const { item } = payload;
       const index = entries.findIndex((e) => e.id === item.id);
       if (index >= 0) {

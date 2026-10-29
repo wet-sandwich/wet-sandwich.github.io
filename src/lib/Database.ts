@@ -8,10 +8,21 @@ export interface TimeEntry {
   end: number;
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  lastUsed: number;
+}
+
+type Store = "timers" | "projects";
+
 type DBEvents = {
-  add: { item: TimeEntry };
-  delete: { key: IDBValidKey };
-  update: { item: TimeEntry };
+  addTimer: { item: TimeEntry };
+  updateTimer: { item: TimeEntry }
+  deleteTimer: { key: IDBValidKey };
+  addProject: { item: Project };
+  updateProject: { item: Project };
+  deleteProject: { key: IDBValidKey };
 }
 
 export class Database extends EventEmitter<DBEvents> {
@@ -19,23 +30,43 @@ export class Database extends EventEmitter<DBEvents> {
 
   private openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-      if (this.#db) resolve(this.#db);
+      if (this.#db) return resolve(this.#db);
 
-      const request = indexedDB.open("timeit-db", 1);
+      const request = indexedDB.open("timeit-db", 2);
 
-      request.onupgradeneeded = (_event: IDBVersionChangeEvent) => {
+      request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = request.result;
+        const tx = request.transaction!;
+        const { oldVersion } = event;
 
-        const timerStore = db.createObjectStore("timers", { keyPath: "id" });
+        if (oldVersion < 1) {
+          const timerStore = db.createObjectStore("timers", { keyPath: "id" });
+          timerStore.createIndex("project", "project", { unique: false });
+          timerStore.createIndex("time", "start", { unique: true });
+        }
 
-        timerStore.createIndex("project", "project", { unique: false });
-        timerStore.createIndex("time", "start", { unique: true });
+        if (oldVersion < 2) {
+          const timerStore = tx.objectStore("timers");
+          timerStore.createIndex("task", "task", { unique: false });
+
+          const projectStore = db.createObjectStore("projects", { keyPath: "id" });
+          projectStore.createIndex("lastUsed", "lastUsed", { unique: false });
+        }
+      }
+
+      request.onblocked = () => {
+        console.warn("Database upgrade blocked: close other tabs of this app.");
       }
 
       request.onsuccess = (event: Event) => {
         const target = event.target as IDBOpenDBRequest;
-        this.#db = target.result;
-        resolve(this.#db);
+        const db = target.result;
+        db.onversionchange = () => {
+          db.close();
+          this.#db = null;
+        };
+        this.#db = db;
+        resolve(db);
       }
 
       request.onerror = (event: Event) => {
@@ -45,55 +76,88 @@ export class Database extends EventEmitter<DBEvents> {
     });
   }
 
-  async createTimer(entry: TimeEntry): Promise<void> {
+  private abortError(tx: IDBTransaction): DOMException {
+    return tx.error ?? new DOMException("Transaction aborted", "AbortError");
+  }
+
+  private async add(store: Store, data: TimeEntry | Project): Promise<void> {
     const db = await this.openDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction("timers", "readwrite");
-      tx.objectStore("timers").add(entry);
-      tx.oncomplete = () => {
-        resolve();
-        this.emit("add", { item: entry, })
-      }
-      tx.onerror = () => reject();
+      const tx = db.transaction(store, "readwrite");
+      const request = tx.objectStore(store).add(data);
+      tx.oncomplete = () => resolve();
+      request.onerror = () => reject(request.error);
+      tx.onabort = () => reject(this.abortError(tx));
     });
   }
 
-  async readTimer(id: string): Promise<TimeEntry> {
+  private async get(store: Store, id: IDBValidKey): Promise<TimeEntry | undefined> {
     const db = await this.openDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction("timers", "readonly");
-      const store = tx.objectStore("timers");
-      const request = store.get(id);
-      request.onsuccess = () => resolve(request.result);
+      const tx = db.transaction(store, "readonly");
+      const request = tx.objectStore(store).get(id);
+      request.onsuccess = () => resolve(request.result as TimeEntry | undefined);
       request.onerror = () => reject(request.error);
+      tx.onabort = () => reject(this.abortError(tx));
     });
+  }
+
+  private async put(store: Store, data: TimeEntry | Project): Promise<void> {
+    const db = await this.openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, "readwrite");
+      const request = tx.objectStore(store).put(data);
+      tx.oncomplete = () => resolve();
+      request.onerror = () => reject(request.error);
+      tx.onabort = () => reject(this.abortError(tx));
+    });
+  }
+
+  private async delete(store: Store, id: IDBValidKey): Promise<void> {
+    const db = await this.openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, "readwrite");
+      const request = tx.objectStore(store).delete(id);
+      tx.oncomplete = () => resolve();
+      request.onerror = () => reject(request.error);
+      tx.onabort = () => reject(this.abortError(tx));
+    });
+  }
+
+  async createTimer(entry: TimeEntry) {
+    try {
+      await this.add("timers", entry);
+      this.emit("addTimer", { item: entry });
+    } catch (error) {
+      console.error(`Failed to create new timer ${entry.id}:`, error);
+    }
+  }
+
+  async readTimer(id: string): Promise<TimeEntry | null> {
+    try {
+      return (await this.get("timers", id)) ?? null;
+    } catch (error) {
+      console.error(`Failed to get timer ${id}:`, error);
+      return null;
+    }
   }
 
   async updateTimer(entry: TimeEntry): Promise<void> {
-    const db = await this.openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction("timers", "readwrite");
-      tx.objectStore("timers").put(entry);
-      tx.oncomplete = () => {
-        resolve();
-        this.emit("update", { item: entry });
-      }
-      tx.onerror = () => reject();
-    });
+    try {
+      await this.put("timers", entry);
+      this.emit("updateTimer", { item: entry });
+    } catch (error) {
+      console.error(`Failed to update timer ${entry.id}:`, error);
+    }
   }
 
   async deleteTimer(id: string): Promise<void> {
-    const db = await this.openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction("timers", "readwrite");
-      const store = tx.objectStore("timers");
-      const request = store.delete(id);
-      request.onsuccess = () => {
-        resolve();
-        this.emit("delete", { key: id });
-      }
-      request.onerror = () => reject();
-    });
+    try {
+      await this.delete("timers", id);
+      this.emit("deleteTimer", { key: id });
+    } catch (error) {
+      console.error(`Failed to delete timer ${id}:`, error);
+    }
   }
 
   async getTimersBetween(start: number, end: number = Date.now()): Promise<TimeEntry[]> {
