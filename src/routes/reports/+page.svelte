@@ -3,9 +3,9 @@
   import Report from "./Report.svelte";
   import { IconButton, PageHeader, SectionHeader } from "#lib";
   import Gear from "#lib/icons/Gear.svelte";
-  import db from "#lib/Database.ts";
-  import type { TimeEntry } from "#lib/Database.ts";
-  import { formatHoursMinutes } from "#lib/utils/time.ts";
+  import db, { type TimeEntry } from "#lib/Database.ts";
+  import { formatHoursMinutes, numberOfDays } from "#lib/utils";
+  import Chart from "./Chart.svelte";
 
   let entries: TimeEntry[] = $state([]);
   let start: number | null = $state(null);
@@ -13,6 +13,11 @@
 
   let total = $derived.by(() => {
     return entries.reduce((acc, val) => acc + val.end - val.start, 0);
+  });
+
+  let numDays = $derived.by(() => {
+    if (!start || !end) return 0;
+    return numberOfDays(start, end);
   });
 
   $effect(() => {
@@ -43,4 +48,7 @@
 
   <Report {entries} />
 
+  {#if start && end && numDays > 1 && total > 0}
+    <Chart {entries} {start} {end} />
+  {/if}
 </div>

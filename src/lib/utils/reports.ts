@@ -6,7 +6,8 @@ import {
   isYesterday,
   format,
   startOfDay,
-  formatISO,
+  differenceInCalendarDays,
+  eachDayOfInterval,
 } from "date-fns";
 
 export type Breakdown = {
@@ -64,4 +65,25 @@ export function organizeEntries(entries: TimeEntry[]): ActivityRow[] {
   }
 
   return rows;
+}
+
+export function createDataSeries(
+  entries: TimeEntry[],
+  start: number,
+  end: number,
+): { date: Date; value: number }[] {
+  const dailyTotals = new Map<number, number>();
+  for (const entry of entries) {
+    const day = startOfDay(entry.start).getTime();
+    const hours = (entry.end - entry.start) / 1000 / 3600;
+    dailyTotals.set(day, (dailyTotals.get(day) ?? 0) + hours);
+  }
+  return eachDayOfInterval({ start, end }).map((date) => ({
+    date,
+    value: dailyTotals.get(date.getTime()) ?? 0,
+  }));
+}
+
+export function numberOfDays(start: number, end: number): number {
+  return differenceInCalendarDays(end, start) + 1;
 }
