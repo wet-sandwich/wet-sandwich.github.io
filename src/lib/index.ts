@@ -29,3 +29,4 @@ export { default as ConfirmModal } from "./components/modals/ConfirmModal.svelte
 // input components
 export { default as Input } from "./components/inputs/Input.svelte";
 export { default as DatePicker } from "./components/inputs/DatePicker.svelte";
+export { default as ComboInput } from "./components/inputs/ComboInput.svelte";
