@@ -1,6 +1,6 @@
 <script lang="ts">
   import IntervalSelect from "./IntervalSelect.svelte";
-  import Breakdown from "./Breakdown.svelte";
+  import Report from "./Report.svelte";
   import { IconButton, PageHeader, SectionHeader } from "#lib";
   import Gear from "#lib/icons/Gear.svelte";
   import db from "#lib/Database.ts";
@@ -10,6 +10,7 @@
   let entries: TimeEntry[] = $state([]);
   let start: number | null = $state(null);
   let end: number | null = $state(null);
+
   let total = $derived.by(() => {
     return entries.reduce((acc, val) => acc + val.end - val.start, 0);
   });
@@ -31,10 +32,15 @@
   />
 </PageHeader>
 
-<SectionHeader>Intervals</SectionHeader>
-<IntervalSelect bind:start bind:end />
+<div class="min-h-0 flex-1 overflow-y-auto">
+  <SectionHeader>Intervals</SectionHeader>
+  <IntervalSelect bind:start bind:end />
 
-<SectionHeader>Tracked Hours</SectionHeader>
-<p class="text-center text-5xl font-bold mt-4 mb-6">{formatHoursMinutes(total)}</p>
+  <SectionHeader>Tracked Hours</SectionHeader>
+  <p class="text-center text-5xl font-bold mt-4 mb-6">
+    {formatHoursMinutes(total)}
+  </p>
 
-<Breakdown {entries} />
+  <Report {entries} />
+
+</div>
