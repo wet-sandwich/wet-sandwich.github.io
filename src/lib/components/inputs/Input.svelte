@@ -31,12 +31,12 @@
     <span class="text-red-500 -ml-0.5">*</span>
   {/if}
   <input
+    {...rest}
     {type}
     {placeholder}
     {required}
     {disabled}
     bind:value
-    {...rest}
     class="w-full px-3 py-2 text-sm bg-white border rounded-lg shadow-sm outline-none"
   />
 </label>
