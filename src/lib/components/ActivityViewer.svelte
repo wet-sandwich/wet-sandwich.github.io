@@ -5,9 +5,11 @@
 
   interface Props {
     entries: ActivityRow[];
+    onLoadMore?: () => Promise<void>;
+    hasMore?: boolean;
   }
 
-  let { entries }: Props = $props();
+  let { entries, onLoadMore, hasMore = false }: Props = $props();
 
   let container: HTMLDivElement | undefined = $state();
   let stickyHeight = $state(0);
@@ -56,7 +58,12 @@
   class="relative min-h-0 flex-1 overflow-hidden no-scrollbar-list"
   onscrollcapture={update}
 >
-  <VirtualList items={entries} onRangeChange={update}>
+  <VirtualList
+    items={entries}
+    onRangeChange={update}
+    {onLoadMore}
+    {hasMore}
+  >
     {#snippet renderItem(item)}
       {#if item.type === "header"}
         <SubHeader>{item.label}</SubHeader>

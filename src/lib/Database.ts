@@ -215,6 +215,28 @@ export class Database extends EventEmitter<DBEvents> {
     });
   }
 
+  async getTimersBefore(before: number, limit: number): Promise<TimeEntry[]> {
+    const db = await this.openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("timers", "readonly");
+      const range = IDBKeyRange.upperBound(before, true);
+      const request = tx.objectStore("timers").index("time").openCursor(range, "prev");
+      const results: TimeEntry[] = [];
+
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (cursor && results.length < limit) {
+          results.push(cursor.value);
+          cursor.continue();
+        } else {
+          resolve(results);
+        }
+      };
+      request.onerror = () => reject(request.error);
+      tx.onabort = () => reject(this.abortError(tx));
+    });
+  }
+
   async getProjects(): Promise<Project[]> {
     try {
       const db = await this.openDB();

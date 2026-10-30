@@ -15,21 +15,39 @@
   import { onMount } from "svelte";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
-  import { startOfPriorDay, organizeEntries } from "#lib/utils";
+  import { organizeEntries } from "#lib/utils";
   import timer from "#lib/ActiveTimer.svelte.ts";
   import projects from "#lib/Projects.svelte.ts";
   import db from "#lib/Database";
   import type { TimeEntry } from "#lib/Database.ts";
 
+  const PAGE_SIZE = 30;
+
   let isModalOpen = $state(false);
   let entries: TimeEntry[] = $state([]);
+  let hasMore = $state(true);
+
+  let loadedUntil = Infinity;
+  let loading = false;
+
+  async function loadMore() {
+    if (loading || !hasMore) return;
+    loading = true;
+    try {
+      const older = await db.getTimersBefore(loadedUntil, PAGE_SIZE + 1);
+      hasMore = older.length > PAGE_SIZE;
+      const page = older.slice(0, PAGE_SIZE);
+      if (page.length) loadedUntil = page[page.length - 1].start;
+      entries.push(...page);
+    } catch (error) {
+      console.error("Failed to load timers:", error);
+    } finally {
+      loading = false;
+    }
+  }
 
   onMount(() => {
-    const weekPrior = startOfPriorDay(7);
-    async function fetchTimers() {
-      entries = await db.getTimersBetween(weekPrior);
-    }
-    fetchTimers();
+    loadMore();
 
     const unsubOnAdd = db.on("addTimer", (payload) => {
       entries.unshift(payload.item);
@@ -92,7 +110,11 @@
 
 <SectionHeader>Activity</SectionHeader>
 {#if entries.length}
-  <ActivityViewer entries={organizeEntries(entries)} />
+  <ActivityViewer
+    entries={organizeEntries(entries)}
+    onLoadMore={loadMore}
+    {hasMore}
+  />
 {:else}
   <SectionText>No recent activity.</SectionText>
 {/if}
