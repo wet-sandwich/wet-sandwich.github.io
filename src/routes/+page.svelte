@@ -3,6 +3,7 @@
     IconButton,
     InfoModal,
     Input,
+    ComboInput,
     PageHeader,
     PrimaryButton,
     SecondaryButton,
@@ -16,6 +17,7 @@
   import Gear from "#lib/icons/Gear.svelte";
   import { startOfPriorDay, organizeEntries } from "#lib/utils";
   import timer from "#lib/ActiveTimer.svelte.ts";
+  import projects from "#lib/Projects.svelte.ts";
   import db from "#lib/Database";
   import type { TimeEntry } from "#lib/Database.ts";
 
@@ -99,7 +101,12 @@
   <form onsubmit={handleSubmit}>
     <Input label="Task" bind:value={formData.task} required />
 
-    <Input label="Project" bind:value={formData.project} required />
+    <ComboInput
+      label="Project"
+      options={projects.names}
+      bind:value={formData.project}
+      required
+    />
 
     <div class="flex justify-end mt-4 gap-4">
       <SecondaryButton

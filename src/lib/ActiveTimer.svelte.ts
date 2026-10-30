@@ -41,12 +41,14 @@ class Timer {
     const id = crypto.randomUUID();
     this.current = { id, task, project, start: Date.now() };
     localStorage.setItem(this.#key, JSON.stringify(this.current));
+    await db.touchProject(project);
   }
 
-  edit(timer: ActiveTimer): void {
+  async edit(timer: ActiveTimer): Promise<void> {
     if (!this.current) return;
     this.current = timer;
     localStorage.setItem(this.#key, JSON.stringify(timer));
+    await db.touchProject(timer.project);
   }
 
   delete(): void {

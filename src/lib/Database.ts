@@ -25,6 +25,31 @@ type DBEvents = {
   deleteProject: { key: IDBValidKey };
 }
 
+function backfillProjects(tx: IDBTransaction) {
+  const lastUsed = new Map<string, number>();
+  const cursorRequest = tx.objectStore("timers").openCursor();
+  cursorRequest.onsuccess = () => {
+    const cursor = cursorRequest.result;
+    if (cursor) {
+      const { project, start } = cursor.value as TimeEntry;
+      const name = project?.trim();
+      if (name) lastUsed.set(name, Math.max(lastUsed.get(name) ?? 0, start));
+      cursor.continue();
+      return;
+    }
+    const projectStore = tx.objectStore("projects");
+    const byName = projectStore.index("project");
+    for (const [name, time] of lastUsed) {
+      const existing = byName.getKey(name);
+      existing.onsuccess = () => {
+        if (existing.result === undefined) {
+          projectStore.add({ id: crypto.randomUUID(), name, lastUsed: time });
+        }
+      };
+    }
+  };
+}
+
 export class Database extends EventEmitter<DBEvents> {
   #db: IDBDatabase | null = null;
 
@@ -32,7 +57,7 @@ export class Database extends EventEmitter<DBEvents> {
     return new Promise((resolve, reject) => {
       if (this.#db) return resolve(this.#db);
 
-      const request = indexedDB.open("timeit-db", 2);
+      const request = indexedDB.open("timeit-db", 3);
 
       request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = request.result;
@@ -51,6 +76,12 @@ export class Database extends EventEmitter<DBEvents> {
 
           const projectStore = db.createObjectStore("projects", { keyPath: "id" });
           projectStore.createIndex("lastUsed", "lastUsed", { unique: false });
+        }
+
+        if (oldVersion < 3) {
+          const projectStore = tx.objectStore("projects");
+          projectStore.createIndex("project", "name", { unique: true });
+          backfillProjects(tx);
         }
       }
 
@@ -129,7 +160,7 @@ export class Database extends EventEmitter<DBEvents> {
       await this.add("timers", entry);
       this.emit("addTimer", { item: entry });
     } catch (error) {
-      console.error(`Failed to create new timer ${entry.id}:`, error);
+      console.error(`Failed to create new timer ${entry.task}:`, error);
     }
   }
 
@@ -146,8 +177,9 @@ export class Database extends EventEmitter<DBEvents> {
     try {
       await this.put("timers", entry);
       this.emit("updateTimer", { item: entry });
+      await this.touchProject(entry.project);
     } catch (error) {
-      console.error(`Failed to update timer ${entry.id}:`, error);
+      console.error(`Failed to update timer ${entry.task}:`, error);
     }
   }
 
@@ -181,6 +213,52 @@ export class Database extends EventEmitter<DBEvents> {
       };
       request.onerror = () => reject(request.error);
     });
+  }
+
+  async getProjects(): Promise<Project[]> {
+    try {
+      const db = await this.openDB();
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction("projects", "readonly");
+        const request = tx.objectStore("projects").index("lastUsed").getAll();
+        request.onsuccess = () => resolve((request.result as Project[]).reverse());
+        request.onerror = () => reject(request.error);
+        tx.onabort = () => reject(this.abortError(tx));
+      });
+    } catch (error) {
+      console.error("Failed to get projects:", error);
+      return [];
+    }
+  }
+
+  async touchProject(name: string, time: number = Date.now()): Promise<void> {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    try {
+      const db = await this.openDB();
+      const { project, isNew } = await new Promise<{ project: Project; isNew: boolean }>(
+        (resolve, reject) => {
+          const tx = db.transaction("projects", "readwrite");
+          const store = tx.objectStore("projects");
+          const lookup = store.index("project").get(trimmed);
+          let result: { project: Project; isNew: boolean };
+          lookup.onsuccess = () => {
+            const existing = lookup.result as Project | undefined;
+            const project = existing
+              ? { ...existing, lastUsed: Math.max(existing.lastUsed, time) }
+              : { id: crypto.randomUUID(), name: trimmed, lastUsed: time };
+            store.put(project);
+            result = { project, isNew: !existing };
+          };
+          lookup.onerror = () => reject(lookup.error);
+          tx.oncomplete = () => resolve(result);
+          tx.onabort = () => reject(this.abortError(tx));
+        },
+      );
+      this.emit(isNew ? "addProject" : "updateProject", { item: project });
+    } catch (error) {
+      console.error(`Failed to save project ${trimmed}:`, error);
+    }
   }
 }
 

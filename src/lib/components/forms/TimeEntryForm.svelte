@@ -4,11 +4,13 @@
     DatePicker,
     InfoLine,
     Input,
+    ComboInput,
     PrimaryButton,
     SecondaryButton,
   } from "#lib";
   import { formatTimestamp, formatHoursMinutes } from "#lib/utils";
   import timer from "#lib/ActiveTimer.svelte.ts";
+  import projects from "#lib/Projects.svelte.ts";
   import db from "#lib/Database.ts";
   import ConfirmModal from "../modals/ConfirmModal.svelte";
 
@@ -26,12 +28,12 @@
   let isEditing = $state(false);
   let isConfirmOpen = $state(false);
 
-  function handleSave() {
+  async function handleSave() {
     isEditing = false;
     if (!end) {
-      timer.edit({ id, task, project, start });
+      await timer.edit({ id, task, project, start });
     } else {
-      db.updateTimer({ id, task, project, start, end });
+      await db.updateTimer({ id, task, project, start, end });
     }
   }
 
@@ -71,7 +73,11 @@
   {:else}
     <Input label="Task" bind:value={task} required />
 
-    <Input label="Project" bind:value={project} />
+    <ComboInput
+      label="Project"
+      options={projects.names}
+      bind:value={project}
+    />
 
     <DatePicker label="Start" bind:timestamp={start} />
 
