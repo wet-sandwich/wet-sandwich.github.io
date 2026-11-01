@@ -45,7 +45,7 @@ export function formatHoursMinutesSeconds(ms: number): string {
 }
 
 // get a timestamp in the form of "Jan 01, 1970 24:00" from a timestamp in milliseconds
-export function formatTimestamp(ms: number) {
-  if (isNaN(ms)) return "";
-  return format(new Date(ms), "MMM dd, y kk:mm");
+export function formatTimestamp(ms: number, time = true) {
+  if (!Number.isFinite(ms)) return "";
+  return time ? format(new Date(ms), "MMM dd, y kk:mm") : format(new Date(ms), "MMM dd, y");
 }

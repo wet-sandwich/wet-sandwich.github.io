@@ -6,6 +6,7 @@
   interface Props {
     label: string;
     timestamp: number;
+    time?: boolean;
     required?: boolean;
     disabled?: boolean;
   }
@@ -14,24 +15,30 @@
     startDate: number;
   }
 
-  let { label, timestamp = $bindable(), required, disabled }: Props = $props();
+  let {
+    label,
+    timestamp = $bindable(),
+    time = true,
+    required,
+    disabled,
+  }: Props = $props();
 
   let isOpen = $state(false);
-  let displayValue = $derived(formatTimestamp(timestamp));
+  let displayValue = $derived(formatTimestamp(timestamp, time));
 
   const togglePicker = () => (isOpen = !isOpen);
 
   function handleInput(event: DateChangeEvent) {
     const input = event.startDate;
     timestamp = input;
-    displayValue = formatTimestamp(input);
+    displayValue = formatTimestamp(input, time);
   }
 </script>
 
 <DatePicker
   bind:isOpen
   bind:startDate={timestamp}
-  showTimePicker
+  showTimePicker={time}
   theme="centered"
   onDateChange={handleInput}
 >
@@ -45,7 +52,9 @@
       <span class="text-red-500 -ml-0.5">*</span>
     {/if}
     <div class="relative w-full">
-      <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+      <span
+        class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+      >
         <Calendar />
       </span>
       <input

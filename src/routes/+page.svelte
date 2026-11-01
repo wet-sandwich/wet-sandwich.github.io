@@ -11,10 +11,12 @@
     SectionText,
     TimerCard,
     ActivityViewer,
+    DatePicker,
   } from "#lib";
   import { onMount } from "svelte";
   import Add from "#lib/icons/Add.svelte";
   import Gear from "#lib/icons/Gear.svelte";
+  import Filter from "#lib/icons/Filter.svelte";
   import { organizeEntries } from "#lib/utils";
   import timer from "#lib/ActiveTimer.svelte.ts";
   import projects from "#lib/Projects.svelte.ts";
@@ -23,7 +25,8 @@
 
   const PAGE_SIZE = 30;
 
-  let isModalOpen = $state(false);
+  let isTimerFormOpen = $state(false);
+  let isFilterFormOpen = $state(false);
   let entries: TimeEntry[] = $state([]);
   let hasMore = $state(true);
 
@@ -73,21 +76,47 @@
     };
   });
 
-  const initialData = () => ({
+  const initialFormData = () => ({
     task: "",
     project: "",
   });
-  let formData = $state(initialData());
+  let formData = $state(initialFormData());
+
+  const initialFilterData = () => ({
+    project: "",
+    begin: -Infinity,
+    end: Infinity,
+  });
+  let filterData = $state(initialFilterData());
 
   function handleAddTimer() {
-    isModalOpen = true;
+    isTimerFormOpen = true;
   }
 
   async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
-    isModalOpen = false;
+    isTimerFormOpen = false;
     await timer.start(formData.task, formData.project);
-    Object.assign(formData, initialData());
+    Object.assign(formData, initialFormData());
+  }
+
+  async function handleApplyFilters() {
+    try {
+      entries = await db.searchTimers(filterData.project, filterData.begin, filterData.end);
+    } catch (error) {
+      console.error("Failed to search timers:", error);
+    } finally {
+      isFilterFormOpen = false;
+    }
+  }
+
+  function handleClearFilters() {
+    isFilterFormOpen = false;
+    Object.assign(filterData, initialFilterData());
+    loadedUntil = Infinity;
+    hasMore = true;
+    entries = [];
+    loadMore();
   }
 </script>
 
@@ -108,7 +137,12 @@
   <SectionText>No active timer.</SectionText>
 {/if}
 
-<SectionHeader>Activity</SectionHeader>
+<SectionHeader>
+  <div class="flex flex-row justify-between">
+    Activity
+    <IconButton label="Filter" icon={Filter} onclick={() => (isFilterFormOpen = true)} />
+  </div>
+</SectionHeader>
 {#if entries.length}
   <ActivityViewer
     entries={organizeEntries(entries)}
@@ -119,7 +153,7 @@
   <SectionText>No recent activity.</SectionText>
 {/if}
 
-<InfoModal bind:show={isModalOpen} title="New Timer">
+<InfoModal bind:show={isTimerFormOpen} title="New Timer">
   <form onsubmit={handleSubmit}>
     <Input label="Task" bind:value={formData.task} required />
 
@@ -133,11 +167,34 @@
     <div class="flex justify-end mt-4 gap-4">
       <SecondaryButton
         type="reset"
-        onclick={() => (isModalOpen = false)}
+        onclick={() => (isTimerFormOpen = false)}
         text="Cancel"
       />
 
       <PrimaryButton type="submit" text="Start" />
+    </div>
+  </form>
+</InfoModal>
+
+<InfoModal bind:show={isFilterFormOpen} title="Filter Entries">
+  <form onsubmit={handleApplyFilters} class="flex flex-col gap-2 px-1">
+    <ComboInput
+      label="Project"
+      options={projects.names}
+      bind:value={filterData.project}
+    />
+
+    <DatePicker
+      label="Start Date"
+      bind:timestamp={filterData.begin}
+      time={false}
+    />
+
+    <DatePicker label="End Date" bind:timestamp={filterData.end} time={false} />
+
+    <div class="flex justify-end mt-4 gap-4">
+      <SecondaryButton type="reset" onclick={handleClearFilters} text="Reset" />
+      <PrimaryButton type="submit" text="Apply" />
     </div>
   </form>
 </InfoModal>

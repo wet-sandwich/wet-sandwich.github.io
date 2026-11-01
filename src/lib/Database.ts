@@ -1,4 +1,5 @@
 import { EventEmitter } from "#lib/EventEmitter.ts";
+import { getTime, startOfDay, endOfDay } from "date-fns";
 
 export interface TimeEntry {
   id: string;
@@ -57,7 +58,7 @@ export class Database extends EventEmitter<DBEvents> {
     return new Promise((resolve, reject) => {
       if (this.#db) return resolve(this.#db);
 
-      const request = indexedDB.open("timeit-db", 3);
+      const request = indexedDB.open("timeit-db", 4);
 
       request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = request.result;
@@ -82,6 +83,11 @@ export class Database extends EventEmitter<DBEvents> {
           const projectStore = tx.objectStore("projects");
           projectStore.createIndex("project", "name", { unique: true });
           backfillProjects(tx);
+        }
+
+        if (oldVersion < 4) {
+          const timerStore = tx.objectStore("timers");
+          timerStore.createIndex("project_date", ["project", "start"]);
         }
       }
 
@@ -226,6 +232,35 @@ export class Database extends EventEmitter<DBEvents> {
       request.onsuccess = () => {
         const cursor = request.result;
         if (cursor && results.length < limit) {
+          results.push(cursor.value);
+          cursor.continue();
+        } else {
+          resolve(results);
+        }
+      };
+      request.onerror = () => reject(request.error);
+      tx.onabort = () => reject(this.abortError(tx));
+    });
+  }
+
+  async searchTimers(project: string, begin: number, end: number): Promise<TimeEntry[]> {
+    const db = await this.openDB();
+    const lower = Number.isFinite(begin) ? getTime(startOfDay(begin)) : 0;
+    const upper = Number.isFinite(end) ? getTime(endOfDay(end)) : Date.now();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("timers", "readonly");
+      const index = Boolean(project)
+        ? tx.objectStore("timers").index("project_date")
+        : tx.objectStore("timers").index("time");
+      const range = Boolean(project)
+        ? IDBKeyRange.bound([project, lower], [project, upper])
+        : IDBKeyRange.bound(lower, upper);
+      const request = index.openCursor(range, "prev");
+      const results: TimeEntry[] = [];
+
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (cursor) {
           results.push(cursor.value);
           cursor.continue();
         } else {
