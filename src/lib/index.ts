@@ -30,3 +30,4 @@ export { default as ConfirmModal } from "./components/modals/ConfirmModal.svelte
 export { default as Input } from "./components/inputs/Input.svelte";
 export { default as DatePicker } from "./components/inputs/DatePicker.svelte";
 export { default as ComboInput } from "./components/inputs/ComboInput.svelte";
+export { default as Radio } from "./components/inputs/Radio.svelte";

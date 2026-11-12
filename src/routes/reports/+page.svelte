@@ -1,7 +1,8 @@
 <script lang="ts">
   import IntervalSelect from "./IntervalSelect.svelte";
   import Report from "./Report.svelte";
-  import { IconButton, PageHeader, SectionHeader } from "#lib";
+  import { IconButton, PageHeader, SectionHeader, InfoModal, Radio } from "#lib";
+  import PersistentState from "#lib/PersistentState.svelte.ts";
   import Gear from "#lib/icons/Gear.svelte";
   import db, { type TimeEntry } from "#lib/Database.ts";
   import { formatHoursMinutes, numberOfDays } from "#lib/utils";
@@ -10,6 +11,9 @@
   let entries: TimeEntry[] = $state([]);
   let start: number | null = $state(null);
   let end: number | null = $state(null);
+  let isSettingsOpen = $state(false);
+
+  let chartStyle = new PersistentState<"mixed" | "separate">("chartStyle", "mixed");
 
   let total = $derived.by(() => {
     return entries.reduce((acc, val) => acc + val.end - val.start, 0);
@@ -33,7 +37,7 @@
   <IconButton
     label="Settings"
     icon={Gear}
-    onclick={() => console.log("report settings")}
+    onclick={() => (isSettingsOpen = true)}
   />
 </PageHeader>
 
@@ -52,3 +56,17 @@
     <Chart {entries} {start} {end} />
   {/if}
 </div>
+
+<InfoModal bind:show={isSettingsOpen} title="Report Settings">
+  <form class="flex flex-col gap-2">
+    <Radio
+      state={chartStyle}
+      name="chartstyle"
+      legend="Chart style:"
+      options={[
+        { name: "Separate", value: "separate" },
+        { name: "Mixed", value: "mixed" },
+      ]}
+    />
+  </form>
+</InfoModal>
