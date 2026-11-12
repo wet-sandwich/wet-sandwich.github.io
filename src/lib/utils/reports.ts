@@ -84,6 +84,43 @@ export function createDataSeries(
   }));
 }
 
+export type ProjectSeriesRow = { date: Date } & Record<string, number | Date>;
+
+export function createProjectSeries(
+  entries: TimeEntry[],
+  start: number,
+  end: number,
+): { data: ProjectSeriesRow[]; projects: { key: string; name: string }[] } {
+  const totals = new Map<string, number>();
+  const daily = new Map<number, Map<string, number>>();
+  for (const entry of entries) {
+    const name = entry.project.trim();
+    const day = startOfDay(entry.start).getTime();
+    const hours = (entry.end - entry.start) / 1000 / 3600;
+    totals.set(name, (totals.get(name) ?? 0) + hours);
+    const byProject = daily.get(day) ?? new Map<string, number>();
+    byProject.set(name, (byProject.get(name) ?? 0) + hours);
+    daily.set(day, byProject);
+  }
+
+  // use a consistent key format to avoid having unusual characters in the project
+  // name break chart
+  const projects = [...totals.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([name], i) => ({ key: `p${i}`, name }));
+
+  const data = eachDayOfInterval({ start, end }).map((date) => {
+    const byProject = daily.get(date.getTime());
+    const row: ProjectSeriesRow = { date };
+    for (const { key, name } of projects) {
+      row[key] = byProject?.get(name) ?? 0;
+    }
+    return row;
+  });
+
+  return { data, projects };
+}
+
 export function numberOfDays(start: number, end: number): number {
   return differenceInCalendarDays(end, start) + 1;
 }

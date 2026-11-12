@@ -53,7 +53,7 @@
   <Report {entries} />
 
   {#if start && end && numDays > 1 && total > 0}
-    <Chart {entries} {start} {end} />
+    <Chart {entries} {start} {end} chartStyle={chartStyle.value} />
   {/if}
 </div>
 
