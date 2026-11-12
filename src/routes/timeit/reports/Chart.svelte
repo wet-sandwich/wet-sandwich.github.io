@@ -1,10 +1,10 @@
 <script lang="ts">
   import { SubHeader } from "#lib";
-  import type { TimeEntry } from "#lib/Database.ts";
+  import type { TimeEntry } from "#lib/timeit/Database.ts";
   import { BarChart } from "layerchart";
   import { format } from "date-fns";
   import { interpolateBlues } from "d3-scale-chromatic";
-  import { createDataSeries, createProjectSeries } from "#lib/utils/reports.ts";
+  import { createDataSeries, createProjectSeries } from "#lib/timeit/reports.ts";
 
   interface Props {
     entries: TimeEntry[];

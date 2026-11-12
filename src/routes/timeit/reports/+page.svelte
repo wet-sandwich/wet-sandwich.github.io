@@ -3,9 +3,11 @@
   import Report from "./Report.svelte";
   import { IconButton, PageHeader, SectionHeader, InfoModal, Radio } from "#lib";
   import PersistentState from "#lib/PersistentState.svelte.ts";
+  import { migrateStorageKey } from "#lib/storage.ts";
   import Gear from "#lib/icons/Gear.svelte";
-  import db, { type TimeEntry } from "#lib/Database.ts";
-  import { formatHoursMinutes, numberOfDays } from "#lib/utils";
+  import db, { type TimeEntry } from "#lib/timeit/Database.ts";
+  import { formatHoursMinutes } from "#lib/utils";
+  import { numberOfDays } from "#lib/timeit";
   import Chart from "./Chart.svelte";
 
   let entries: TimeEntry[] = $state([]);
@@ -13,7 +15,11 @@
   let end: number | null = $state(null);
   let isSettingsOpen = $state(false);
 
-  let chartStyle = new PersistentState<"mixed" | "separate">("chartStyle", "mixed");
+  migrateStorageKey("chartStyle", "timeit:chartStyle");
+  let chartStyle = new PersistentState<"mixed" | "separate">(
+    "timeit:chartStyle",
+    "mixed",
+  );
 
   let total = $derived.by(() => {
     return entries.reduce((acc, val) => acc + val.end - val.start, 0);

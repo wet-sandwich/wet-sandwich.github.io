@@ -1,6 +1,6 @@
 <script lang="ts">
   import { formatHoursMinutes } from "#lib/utils";
-  import type { Breakdown } from "#lib/utils";
+  import type { Breakdown } from "#lib/timeit";
 
   interface Props {
     project: string;

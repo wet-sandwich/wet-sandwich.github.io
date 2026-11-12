@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { InfoModal, TimeEntryForm } from "#lib";
+  import { InfoModal } from "#lib";
+  import TimeEntryForm from "./TimeEntryForm.svelte";
   import Play from "#lib/icons/Play.svelte";
   import Stop from "#lib/icons/Stop.svelte";
   import {
@@ -7,7 +8,7 @@
     formatHoursMinutes,
     formatHoursMinutesSeconds,
   } from "#lib/utils";
-  import timer from "#lib/ActiveTimer.svelte.ts";
+  import timer from "#lib/timeit/ActiveTimer.svelte.ts";
 
   let isModalOpen = $state(false);
   let resumedAt = $state(Date.now());

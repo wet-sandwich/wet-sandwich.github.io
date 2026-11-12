@@ -1,4 +1,4 @@
-import type { TimeEntry } from "#lib/Database.ts";
+import type { TimeEntry } from "#lib/timeit/Database.ts";
 import {
   isSameYear,
   isSameDay,

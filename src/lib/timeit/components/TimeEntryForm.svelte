@@ -7,12 +7,12 @@
     ComboInput,
     PrimaryButton,
     SecondaryButton,
+    ConfirmModal,
   } from "#lib";
   import { formatTimestamp, formatHoursMinutes } from "#lib/utils";
-  import timer from "#lib/ActiveTimer.svelte.ts";
-  import projects from "#lib/Projects.svelte.ts";
-  import db from "#lib/Database.ts";
-  import ConfirmModal from "../modals/ConfirmModal.svelte";
+  import timer from "#lib/timeit/ActiveTimer.svelte.ts";
+  import projects from "#lib/timeit/Projects.svelte.ts";
+  import db from "#lib/timeit/Database.ts";
 
   interface Props {
     id: string;

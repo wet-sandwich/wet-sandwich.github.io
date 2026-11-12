@@ -1,7 +1,8 @@
 <script lang="ts">
   import VirtualList from "@humanspeak/svelte-virtual-list";
-  import { TimerCard, SubHeader } from "#lib";
-  import type { ActivityRow } from "../utils";
+  import { SubHeader } from "#lib";
+  import TimerCard from "./TimerCard.svelte";
+  import type { ActivityRow } from "../reports.ts";
 
   interface Props {
     entries: ActivityRow[];

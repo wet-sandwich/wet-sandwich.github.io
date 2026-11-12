@@ -1,5 +1,5 @@
 import { browser } from "$app/env";
-import db from "#lib/Database.ts";
+import db from "#lib/timeit/Database.ts";
 
 class ProjectList {
   #names: string[] = $state([]);

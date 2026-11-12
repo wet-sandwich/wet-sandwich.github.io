@@ -6,7 +6,6 @@ export { default as PageHeader } from "./components/PageHeader.svelte";
 export { default as SectionHeader } from "./components/SectionHeader.svelte";
 export { default as SectionText } from "./components/SectionText.svelte";
 export { default as SubHeader } from "./components/SubHeader.svelte";
-export { default as ActivityViewer } from "./components/ActivityViewer.svelte"
 
 // button components
 export { default as DangerButton } from "./components/buttons/DangerButton.svelte";
@@ -16,11 +15,9 @@ export { default as SecondaryButton } from "./components/buttons/SecondaryButton
 export { default as PillButton } from "./components/buttons/PillButton.svelte";
 
 // card components
-export { default as TimerCard } from "./components/cards/TimerCard.svelte";
 
 // form components
 export { default as InfoLine } from "./components/forms/InfoLine.svelte";
-export { default as TimeEntryForm } from "./components/forms/TimeEntryForm.svelte";
 
 // modal components
 export { default as InfoModal } from "./components/modals/InfoModal.svelte";

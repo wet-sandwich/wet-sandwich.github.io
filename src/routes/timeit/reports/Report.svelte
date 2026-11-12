@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { TimeEntry } from "#lib/Database.ts";
+  import type { TimeEntry } from "#lib/timeit/Database.ts";
   import ReportLine from "./ReportLine.svelte";
   import SubHeader from "#lib/components/SubHeader.svelte";
-  import { generateReport } from "#lib/utils";
+  import { generateReport } from "#lib/timeit";
 
   interface Props {
     entries: TimeEntry[];

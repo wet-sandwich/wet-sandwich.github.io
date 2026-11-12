@@ -1,5 +1,6 @@
 import { browser } from "$app/env";
-import db from "#lib/Database.ts";
+import db from "#lib/timeit/Database.ts";
+import { migrateStorageKey } from "#lib/storage.ts";
 
 export interface ActiveTimer {
   id: string;
@@ -9,7 +10,7 @@ export interface ActiveTimer {
 }
 
 class Timer {
-  #key = "currentTimer";
+  #key = "timeit:currentTimer";
   current: ActiveTimer | null = $state(null);
 
   constructor() {
@@ -18,6 +19,7 @@ class Timer {
 
   #getCurrentTimer(): ActiveTimer | null {
     if (!browser) return null;
+    migrateStorageKey("currentTimer", this.#key);
     const stored = localStorage.getItem(this.#key);
     if (!stored) return null;
     try {

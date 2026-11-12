@@ -1,11 +1,15 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  let open = $state(false);
+  import type { RouteId } from "$app/types";
 
-  const links = [
-    { href: "/" as const, label: "Timers" },
-    { href: "/reports" as const, label: "Reports" },
-  ];
+  interface Props {
+    title: string;
+    home: RouteId;
+    links: { href: RouteId; label: string }[];
+  }
+
+  let { title, home, links }: Props = $props();
+  let open = $state(false);
 
   function close() {
     open = false;
@@ -21,7 +25,7 @@
 <header
   class="sticky top-0 z-50 flex h-[60px] items-center justify-between bg-slate-900 px-5 text-white"
 >
-  <a href={resolve("/")} class="text-xl font-bold" onclick={close}>Time-It</a>
+  <a href={resolve(home)} class="text-xl font-bold" onclick={close}>{title}</a>
 
   <button
     class="flex h-10 w-10 flex-col justify-center gap-[5px] p-2 md:hidden"
@@ -63,6 +67,15 @@
           </a>
         </li>
       {/each}
+      <li class="border-t border-slate-700 md:border-0 md:border-l md:pl-6">
+        <a
+          href={resolve("/")}
+          onclick={close}
+          class="block py-3 text-slate-300 hover:underline md:py-0"
+        >
+          All apps
+        </a>
+      </li>
     </ul>
   </nav>
 </header>
