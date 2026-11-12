@@ -3,7 +3,7 @@
 
   interface Props {
     label: string;
-    value?: string | number;
+    value?: string | number | null;
     type?: HTMLInputAttributes["type"];
     placeholder?: string;
     required?: boolean;
