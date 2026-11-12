@@ -249,10 +249,10 @@ export class Database extends EventEmitter<DBEvents> {
     const upper = Number.isFinite(end) ? getTime(endOfDay(end)) : Date.now();
     return new Promise((resolve, reject) => {
       const tx = db.transaction("timers", "readonly");
-      const index = Boolean(project)
+      const index = project
         ? tx.objectStore("timers").index("project_date")
         : tx.objectStore("timers").index("time");
-      const range = Boolean(project)
+      const range = project
         ? IDBKeyRange.bound([project, lower], [project, upper])
         : IDBKeyRange.bound(lower, upper);
       const request = index.openCursor(range, "prev");
